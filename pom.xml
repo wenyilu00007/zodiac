@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.hoau.zodiac</groupId>
+    <artifactId>zodiac</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>zodiac-web</module>
+        <module>zodiac-springboot</module>
+        <module>zodiac-core</module>
+        <module>zodiac-cache</module>
+        <module>zodiac-log</module>
+        <module>zodiac-datasource</module>
+    </modules>
+
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+        <springboot.version>1.5.6.RELEASE</springboot.version>
+        <spring.session.data.redis.version>1.3.1.RELEASE</spring.session.data.redis.version>
+        <fastjson.version>1.2.34</fastjson.version>
+        <druid.version>1.0.27</druid.version>
+        <mysql.connector.version>5.1.41</mysql.connector.version>
+        <mybatis.spring.boot.version>1.2.0</mybatis.spring.boot.version>
+        <pagehelp.verion>4.1.1</pagehelp.verion>
+        <consul.config.version>1.2.1.RELEASE</consul.config.version>
+        <cas.client.version>3.4.1</cas.client.version>
+        <swagger.version>2.7.0</swagger.version>
+        <tk.mapper.version>1.1.3</tk.mapper.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-parent</artifactId>
+                <version>${springboot.version}</version>
+                <type>pom</type>
+            </dependency>
+            <!--springboot web-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${springboot.version}</version>
+            </dependency>
+            <!-- springboot devtools -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-devtools</artifactId>
+                <version>${springboot.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <!-- springboot actuator-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-actuator</artifactId>
+                <version>${springboot.version}</version>
+            </dependency>
+            <!-- springboot test -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <version>${springboot.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <!-- springboot aop -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-aop</artifactId>
+                <version>${springboot.version}</version>
+            </dependency>
+            <!--springboot redis-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-redis</artifactId>
+                <version>${springboot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.session</groupId>
+                <artifactId>spring-session-data-redis</artifactId>
+                <version>${spring.session.data.redis.version}</version>
+            </dependency>
+
+            <!-- springcloud consul config-->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-consul-config</artifactId>
+                <version>${consul.config.version}</version>
+            </dependency>
+            <!-- 支持 fastjson -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+
+            <!-- http 相关 -->
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>4.3</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient-cache</artifactId>
+                <version>4.3</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpmime</artifactId>
+                <version>4.3</version>
+                <scope>compile</scope>
+            </dependency>
+
+            <!-- druid  数据源管理-->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid</artifactId>
+                <version>${druid.version}</version>
+            </dependency>
+
+            <!-- mysql driver -->
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.connector.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mybatis.spring.boot</groupId>
+                <artifactId>mybatis-spring-boot-starter</artifactId>
+                <version>${mybatis.spring.boot.version}</version>
+            </dependency>
+            <!--tk mapper-->
+            <dependency>
+                <groupId>tk.mybatis</groupId>
+                <artifactId>mapper-spring-boot-starter</artifactId>
+                <version>${tk.mapper.version}</version>
+            </dependency>
+
+            <!--分页插件-->
+            <dependency>
+                <groupId>com.github.pagehelper</groupId>
+                <artifactId>pagehelper</artifactId>
+                <version>${pagehelp.verion}</version>
+            </dependency>
+
+            <!--CAS client-->
+            <dependency>
+                <groupId>org.jasig.cas.client</groupId>
+                <artifactId>cas-client-core</artifactId>
+                <version>${cas.client.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.servlet</groupId>
+                        <artifactId>servlet-api</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <!-- swagger2 -->
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger-ui</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+
+</project>
