@@ -1,7 +1,6 @@
 package com.hoau.zodiac.springboot.autoconfig.cache;
 
 import com.hoau.zodiac.cache.CacheManager;
-import com.hoau.zodiac.cache.redis.serializer.FastJsonRedisSerializer;
 import com.hoau.zodiac.cache.redis.storage.RedisCacheStorage;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -27,12 +26,15 @@ public class RedisStorageAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnBean(name = "redisTemplate")
     public RedisCacheStorage redisCacheStorage(RedisTemplate redisTemplate) {
         RedisCacheStorage storage = new RedisCacheStorage();
-        FastJsonRedisSerializer serializer = new FastJsonRedisSerializer();
-        redisTemplate.setKeySerializer(serializer);
+//        FastJsonRedisSerializer serializer = new FastJsonRedisSerializer();
+//        redisTemplate.setKeySerializer(new StringRedisSerializer());
+//        redisTemplate.setValueSerializer(serializer);
+//        redisTemplate.setHashKeySerializer(serializer);
+//        redisTemplate.setHashValueSerializer(serializer);
         storage.setRedisTemplate(redisTemplate);
         return storage;
     }
+
 }

@@ -22,6 +22,11 @@ public class RequestContext {
     public static final String REQUEST_ID_ATTRIBUTE_NAME = "APP_REQUEST_ID_ATTRIBUTE_KEY";
 
     /**
+     * request中存储USERID的key
+     */
+    public static final String REQUEST_USER_ID_ATTRIBUTE_NAME = "APP_REQUEST_USER_ID_ATTRIBUTE_KEY";
+
+    /**
      * 私有构造方法，不允许实例化
      */
     private RequestContext() {}
@@ -61,14 +66,23 @@ public class RequestContext {
     }
 
     /**
-     * 获取当前登录的用户Id, 使用了cas登陆，从Principal中获取
+     * 设置当前登录的用户id
+     * @param userId
+     * @author 陈宇霖
+     * @date 2017年08月07日22:43:59
+     */
+    public static void setCurrentUserId(String userId) {
+        getRequest().setAttribute(RequestContext.REQUEST_USER_ID_ATTRIBUTE_NAME, userId);
+    }
+
+    /**
+     * 获取当前登录的用户Id
      * @return
      * @author 陈宇霖
      * @date 2017年08月02日18:33:11
      */
     public static String getCurrentUserId() {
-        Principal principal = getRequest().getUserPrincipal();
-        return principal == null ? "" : principal.getName();
+        return (String)getRequest().getAttribute(RequestContext.REQUEST_USER_ID_ATTRIBUTE_NAME);
     }
 
 }

@@ -10,12 +10,18 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.Principal;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -26,18 +32,39 @@ import java.util.UUID;
 * @date 2017/8/2 19:12
 * @version V1.0   
 */
-public class ContextFilter implements Filter, ApplicationContextAware{
+public class ContextFilter extends OncePerRequestFilter implements ApplicationContextAware{
 
     Log logger = LogFactory.getLog(ContextFilter.class);
 
     private ApplicationContext applicationContext;
+
+    AntPathMatcher antPathMatcher = new AntPathMatcher();
+
+    /**
+     * 不进行过滤的请求pattern
+     * TODO 增加配置
+     */
+    private Set<String> excludeUrlPattern = new HashSet<String>(Arrays.asList("/health"));
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String url = request.getServletPath();
+        boolean matched = false;
+        for (String pattern : excludeUrlPattern) {
+            matched = antPathMatcher.match(pattern, url);
+            if (matched) {
+                break;
+            }
+        }
+        return matched;
+    }
 
     /**
      * 对 RequestContext、SessionContext、UserContext等进行初始化
      * @author 陈宇霖
      * @date 2017年08月02日19:20:09
      */
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if (request instanceof HttpServletRequest && response instanceof HttpServletResponse) {
             HttpServletRequest httpRequest = (HttpServletRequest) request;
             HttpServletResponse httpResponse = (HttpServletResponse) response;
@@ -52,14 +79,19 @@ public class ContextFilter implements Filter, ApplicationContextAware{
             String userId = SessionContext.getCurrentUserId();
             //如果session中没有，则从request中获取
             if (StringUtils.isEmpty(userId)) {
-                userId = RequestContext.getCurrentUserId();
+                Principal principal = httpRequest.getUserPrincipal();
+                if (principal != null) {
+                    userId = httpRequest.getUserPrincipal().getName();
+                }
             }
+
             //如果还是没有用户，那就有问题了吧
             if (StringUtils.isEmpty(userId)) {
                 SessionContext.invalidateSession();
                 httpResponse.sendRedirect("/");
                 return;
             }
+            RequestContext.setCurrentUserId(userId);
             SessionContext.setCurrentUserId(userId);
 
             //存缓存中获取用户信息
@@ -85,15 +117,11 @@ public class ContextFilter implements Filter, ApplicationContextAware{
             httpRequest.getCookies();
         }
         try {
-            chain.doFilter(request, response);
+            filterChain.doFilter(request, response);
         } finally {
             //请求处理完成后将UserContext中的用户信息移除掉
             UserContext.remove();
         }
-    }
-
-    public void init(FilterConfig filterConfig) throws ServletException {
-
     }
 
     public void destroy() {
@@ -102,5 +130,13 @@ public class ContextFilter implements Filter, ApplicationContextAware{
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+    }
+
+    public Set<String> getExcludeUrlPattern() {
+        return excludeUrlPattern;
+    }
+
+    public void setExcludeUrlPattern(Set<String> excludeUrlPattern) {
+        this.excludeUrlPattern = excludeUrlPattern;
     }
 }

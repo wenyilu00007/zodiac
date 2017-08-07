@@ -17,22 +17,6 @@ import java.io.IOException;
 */
 public class DefaultAuthenticationRedirectStrategy implements AuthenticationRedirectStrategy {
 
-    private String alwaysRedirectServerUrl = "";
-
-    public DefaultAuthenticationRedirectStrategy() {
-        init();
-    }
-
-    /**
-     * 初始化变量
-     * @author 陈宇霖
-     * @date 2017年08月03日20:02:02
-     */
-    public void init() {
-//        CasClientProperties properties = ApplicationContextHolder.getBean(CasClientProperties.class);
-//        this.alwaysRedirectServerUrl = properties.getRedirectServerUrl();
-    }
-
     /**
      * 由于前端框架中使用的是iframe，菜单中是个独立的界面，
      * 如果使用默认的重定向策略，当用户掉线时点击到菜单，跳转到cas登陆界面后，重定向的页面为iframe内部界面，导致前端框架错误，
@@ -47,6 +31,7 @@ public class DefaultAuthenticationRedirectStrategy implements AuthenticationRedi
 //        String alwaysRedirectServerUrl = configGroup.get("cas.auth.fail.always.redirect.server.url");
 //        property == null ? "" : property.getProperty("cas.auth.fail.always.redirect.server.url");
         //只有配置了重定向地址的才进行处理
+        String alwaysRedirectServerUrl = "http://10.39.117.142:8089/#/leo";
         if (CommonUtils.isBlank(alwaysRedirectServerUrl)) {
             response.sendRedirect(potentialRedirectUrl);
         } else {

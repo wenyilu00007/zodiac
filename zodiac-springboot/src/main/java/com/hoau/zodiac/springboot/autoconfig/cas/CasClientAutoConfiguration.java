@@ -1,6 +1,5 @@
 package com.hoau.zodiac.springboot.autoconfig.cas;
 
-import com.hoau.zodiac.springboot.autoconfig.context.ApplicationContextConfiguration;
 import com.hoau.zodiac.springboot.autoconfig.session.RedisSessionConfiguration;
 import org.jasig.cas.client.authentication.AuthenticationFilter;
 import org.jasig.cas.client.util.HttpServletRequestWrapperFilter;
@@ -28,7 +27,7 @@ import java.util.Map;
 */
 @Configuration
 @EnableConfigurationProperties(CasClientProperties.class)
-@AutoConfigureAfter({RedisSessionConfiguration.class, ApplicationContextConfiguration.class})
+@AutoConfigureAfter({RedisSessionConfiguration.class})
 @ConditionalOnProperty(prefix = "zodiac.cas.client", name = "enable", matchIfMissing = true)
 public class CasClientAutoConfiguration {
 

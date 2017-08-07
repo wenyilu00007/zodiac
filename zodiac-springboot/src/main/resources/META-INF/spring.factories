@@ -1,0 +1,10 @@
+# Auto Configure
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.hoau.zodiac.springboot.autoconfig.converter.FastJsonMessageConverterAutoConfiguration,\
+com.hoau.zodiac.springboot.autoconfig.log.LogAutoConfiguration,\
+com.hoau.zodiac.springboot.autoconfig.message.LocaleMessageAutoConfiguration,\
+com.hoau.zodiac.springboot.autoconfig.request.RequestHolderAutoConfiguration,\
+com.hoau.zodiac.springboot.autoconfig.cache.RedisStorageAutoConfiguration,\
+com.hoau.zodiac.springboot.autoconfig.session.RedisSessionConfiguration,\
+com.hoau.zodiac.springboot.autoconfig.cas.CasClientAutoConfiguration,\
+com.hoau.zodiac.springboot.autoconfig.web.WebMvcConfiguration
