@@ -1,4 +1,4 @@
-package com.hoau.zodiac.mybatis.service.insert;
+package com.hoau.zodiac.datasource.mybatis.service.insert;
 
 /**
  * @author 刘德云

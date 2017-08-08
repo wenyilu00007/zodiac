@@ -1,4 +1,4 @@
-package com.hoau.zodiac.mybatis.service.select;
+package com.hoau.zodiac.datasource.mybatis.service.select;
 
 
 import org.apache.ibatis.session.RowBounds;

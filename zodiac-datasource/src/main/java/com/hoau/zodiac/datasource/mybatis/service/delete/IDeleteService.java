@@ -1,4 +1,4 @@
-package com.hoau.zodiac.mybatis.service.delete;
+package com.hoau.zodiac.datasource.mybatis.service.delete;
 
 /**
  * @author 刘德云

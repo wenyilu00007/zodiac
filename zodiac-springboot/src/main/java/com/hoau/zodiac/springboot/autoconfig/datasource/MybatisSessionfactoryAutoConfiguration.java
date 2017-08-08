@@ -26,14 +26,11 @@ import javax.sql.DataSource;
  */
 @Configuration
 @EnableTransactionManagement
-@AutoConfigureAfter(DruidAutoConfiguration.class)
+@AutoConfigureAfter(DynamicDatasourceAutoConfiguration.class)
 public class MybatisSessionfactoryAutoConfiguration implements TransactionManagementConfigurer {
 
     @Autowired
     private DataSource dataSource;
-
-    private String typeAliasPackage = "com.superstart.venus.landing.dao";
-
 
     /**
      * 创建sqlSessionFactoryBean 实例

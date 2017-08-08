@@ -1,4 +1,4 @@
-package com.hoau.zodiac.mybatis.service.update;
+package com.hoau.zodiac.datasource.mybatis.service.update;
 
 import org.apache.ibatis.annotations.Param;
 

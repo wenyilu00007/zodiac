@@ -1,6 +1,6 @@
-package com.hoau.zodiac.mybatis.service;
+package com.hoau.zodiac.datasource.mybatis.service;
 
-import com.hoau.zodiac.mybatis.dao.BaseDao;
+import com.hoau.zodiac.datasource.mybatis.dao.BaseDao;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
