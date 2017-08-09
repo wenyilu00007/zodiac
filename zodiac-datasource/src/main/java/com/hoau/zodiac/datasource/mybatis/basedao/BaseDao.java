@@ -1,4 +1,4 @@
-package com.hoau.zodiac.datasource.mybatis.dao;
+package com.hoau.zodiac.datasource.mybatis.basedao;
 
 import tk.mybatis.mapper.common.Mapper;
 
