@@ -1,4 +1,4 @@
-package com.hoau.zodiac.springboot.autoconfig.web;
+package com.hoau.zodiac.springboot.autoconfig.security;
 
 import com.hoau.zodiac.core.security.SecurityAccess;
 import com.hoau.zodiac.springboot.autoconfig.message.LocaleMessageProperties;
@@ -11,9 +11,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
-* @Title: IntercaptorAutoConfiguration 
+* @Title: SecurityAccessAutoConfiguration
 * @Package com.hoau.leo.config.web 
-* @Description: 拦截器自动装配
+* @Description: 访问控制自动装配
 * @author 陈宇霖  
 * @date 2017/8/4 16:45
 * @version V1.0   
@@ -21,8 +21,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConditionalOnWebApplication
 @EnableConfigurationProperties(LocaleMessageProperties.class)
-@ConditionalOnProperty(prefix = "zodiac.web.interceptor", name = "enable", matchIfMissing = true)
-public class InterceptorAutoConfiguration {
+@ConditionalOnProperty(prefix = "zodiac.web.securityAccess", name = "enable")
+public class SecurityAccessAutoConfiguration {
 
     /**
      * 创建访问控制实体
@@ -44,7 +44,7 @@ public class InterceptorAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnProperty(prefix = "zodiac.web.interceptor", name = "enableAccessInterceptor", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "zodiac.web.securityAccess", name = "enable")
     public AccessInterceptor accessInterceptor() {
         return new AccessInterceptor();
     }

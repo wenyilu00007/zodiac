@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>zodiac</artifactId>
+        <groupId>com.hoau.zodiac</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>zodic-demo</artifactId>
+
+    <properties>
+        <mysql.connector.version>5.1.41</mysql.connector.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.hoau.zodiac</groupId>
+            <artifactId>zodiac-springboot</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <!-- mysql driver -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.connector.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <!-- 使用mvn mybatis-generator:generate 直接生成 -->
+                <groupId>org.mybatis.generator</groupId>
+                <artifactId>mybatis-generator-maven-plugin</artifactId>
+                <version>1.3.2</version>
+                <configuration>
+                    <overwrite>true</overwrite>
+                    <configurationFile>${project.basedir}/src/main/resources/config/generatorConfig.xml
+                    </configurationFile>
+                </configuration>
+            </plugin>
+        </plugins>
+        <resources>
+            <!-- 如果没有该配置，java 路径下的配置文件不会被编译-->
+            <resource>
+                <directory>${project.basedir}/src/main/java</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                    <include>**/*.yml</include>
+                    <include>**/*.properties</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                    <include>**/*.yml</include>
+                    <include>**/*.properties</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
+</project>

@@ -42,7 +42,7 @@ public class LocaleMessageSource {
     }
 
     public String getMessage(String code, Locale locale) {
-        return this.getMessage(code, null, "", locale);
+        return this.getMessage(code, null, code, locale);
     }
 
     /**
@@ -51,11 +51,11 @@ public class LocaleMessageSource {
      * @return
      */
     public String getMessage(String code, Object[] args) {
-        return this.getMessage(code, args, "");
+        return this.getMessage(code, args, code);
     }
 
     public String getMessage(String code, Object[] args, Locale locale) {
-        return this.getMessage(code, args, "", locale);
+        return this.getMessage(code, args, code, locale);
     }
 
     /**

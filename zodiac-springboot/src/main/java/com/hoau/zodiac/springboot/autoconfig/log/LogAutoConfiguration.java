@@ -38,7 +38,7 @@ public class LogAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnWebApplication
-    @ConditionalOnProperty(prefix = "zodiac.log.filter", name = "enable", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "zodiac.log.filter", name = "enable")
     public FilterRegistrationBean logFilterRegistrationBean() {
         LogFilter logFilter = new LogFilter();
         logFilter.setNeedLogRequest(logProperties.getFilter().isNeedLogRequest());

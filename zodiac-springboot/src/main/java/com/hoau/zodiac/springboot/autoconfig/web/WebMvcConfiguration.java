@@ -4,11 +4,16 @@ import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter4;
 import com.hoau.zodiac.core.constant.UrlConstants;
 import com.hoau.zodiac.springboot.autoconfig.context.ContextFilterAutoConfiguration;
 import com.hoau.zodiac.web.filter.ContextFilter;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -29,11 +34,11 @@ import java.util.List;
 @Configuration
 @ConditionalOnWebApplication
 @AutoConfigureAfter(ContextFilterAutoConfiguration.class)
-public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
+public class WebMvcConfiguration extends WebMvcConfigurerAdapter implements ApplicationContextAware{
 
-    @Autowired
-    private FastJsonHttpMessageConverter4 fastJsonHttpMessageConverter4;
+    private ApplicationContext applicationContext;
 
+    Logger logger = LoggerFactory.getLogger(WebMvcConfiguration.class);
 
     /**
      * 增加使用fastjson消息转换器
@@ -42,10 +47,17 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
      * @date 2017年08月02日17:14:38
      */
     @Override
-    @ConditionalOnBean(FastJsonHttpMessageConverter4.class)
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         super.configureMessageConverters(converters);
-        converters.add(fastJsonHttpMessageConverter4);
+        FastJsonHttpMessageConverter4 converter = null;
+        try {
+            converter = applicationContext.getBean("fastJsonHttpMethodMessageConverter", FastJsonHttpMessageConverter4.class);
+        } catch (NoSuchBeanDefinitionException e) {
+            logger.warn("fastJsonHttpMethodMessageConverter bean not created, will use default messageConverter");
+        }
+        if (converter != null) {
+            converters.add(converter);
+        }
     }
 
     /**
@@ -71,6 +83,7 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
      * @date 2017年08月08日00:17:11
      */
     @Bean
+    @ConditionalOnBean(ContextFilter.class)
     public FilterRegistrationBean contextFilterRegistration(ContextFilter contextFilter) {
         FilterRegistrationBean registrationBean = new FilterRegistrationBean();
         registrationBean.setFilter(contextFilter);
@@ -78,5 +91,7 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter {
         return registrationBean;
     }
 
-
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
 }

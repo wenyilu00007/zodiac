@@ -24,6 +24,7 @@ import java.util.Locale;
 */
 @Configuration
 @EnableConfigurationProperties(LocaleMessageProperties.class)
+@ConditionalOnProperty(prefix = "zodiac.message", name = "enable", matchIfMissing = true)
 public class LocaleMessageAutoConfiguration {
 
     @Autowired
@@ -39,7 +40,6 @@ public class LocaleMessageAutoConfiguration {
      * @date 2017年08月03日00:27:58
      */
     @Bean
-    @ConditionalOnProperty(prefix = "wabapp.message", name = "enable", matchIfMissing = true)
     public LocaleMessageSource localeMessageSource() {
         LocaleMessageSource localeMessageSource = new LocaleMessageSource();
         localeMessageSource.setMessageSource(messageSource);
@@ -53,7 +53,6 @@ public class LocaleMessageAutoConfiguration {
      * @date 2017年08月03日00:44:27
      */
     @Bean
-    @ConditionalOnProperty(prefix = "wabapp.message", name = "enable", matchIfMissing = true)
     public LocaleResolver localeResolver() {
         CookieLocaleResolver cookieLocaleResolver = new CookieLocaleResolver();
         cookieLocaleResolver.setCookieName(CookieConstants.COOKIE_LANGUAGE_NAME);

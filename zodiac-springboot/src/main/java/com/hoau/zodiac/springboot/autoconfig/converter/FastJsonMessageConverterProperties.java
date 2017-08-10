@@ -16,6 +16,11 @@ import java.util.List;
 public class FastJsonMessageConverterProperties {
 
     /**
+     * 是否使用fastjson转换json
+     */
+    private boolean enable;
+
+    /**
      * 支持的参数类型
      */
     private List<String> supportedMediaTypes;
@@ -27,6 +32,14 @@ public class FastJsonMessageConverterProperties {
 
     public List<String> getSupportedMediaTypes() {
         return supportedMediaTypes;
+    }
+
+    public boolean isEnable() {
+        return enable;
+    }
+
+    public void setEnable(boolean enable) {
+        this.enable = enable;
     }
 
     public void setSupportedMediaTypes(List<String> supportedMediaTypes) {

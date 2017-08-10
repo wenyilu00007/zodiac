@@ -31,7 +31,7 @@ import java.util.Map;
 */
 @Configuration
 @EnableConfigurationProperties(DatasourceProperties.class)
-@ConditionalOnProperty(prefix = "zodiac.dynamic.datasource", name = "enable", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "zodiac.dynamic.datasource", name = "enable")
 public class DynamicDatasourceAutoConfiguration {
 
     Log logger = LogFactory.getLog(DynamicDatasourceAutoConfiguration.class);

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.parser.Feature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter4;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,7 @@ import java.util.List;
 */
 @Configuration
 @EnableConfigurationProperties(FastJsonMessageConverterProperties.class)
+@ConditionalOnProperty(prefix = "zodiac.fastjson", name = "enable")
 public class FastJsonMessageConverterAutoConfiguration {
 
     @Autowired

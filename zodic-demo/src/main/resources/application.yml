@@ -1,0 +1,36 @@
+debug: true
+# 启动服务相关配置
+server:
+  port: 8400
+  context-path: /zodic-demo
+  tomcat:
+    uri-encoding: UTF-8
+spring:
+  redis:
+    enable: true
+    database: 0
+    sentinel:
+      master: mymaster
+      nodes: 10.39.232.215:26379,10.39.232.215:26479,10.39.232.215:26579
+    pool:
+      max-idle: -1
+      max-wait: 3000
+      max-active: -1
+      min-idle: 10
+zodiac:
+  log:
+    filter:
+      enable: true
+  mybatis:
+    enable: true
+  dynamic:
+      datasource:
+        enable: true
+        defaultDatasourceName: master
+        datasourceList:
+              - name: master
+                url: jdbc:mysql://10.39.232.216:3306/leo
+                username: leo_user
+                password: leo
+                driverClassName: com.mysql.jdbc.Driver
+                maxActive: 200

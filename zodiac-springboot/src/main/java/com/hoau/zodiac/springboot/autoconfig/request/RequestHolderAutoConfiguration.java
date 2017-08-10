@@ -15,7 +15,7 @@ import org.springframework.web.context.request.RequestContextListener;
 * @version V1.0   
 */
 @Configuration
-@ConditionalOnProperty(prefix = "zodiac.request.holder", name = "enable", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "zodiac.request.holder", name = "enable")
 public class RequestHolderAutoConfiguration {
 
     /**

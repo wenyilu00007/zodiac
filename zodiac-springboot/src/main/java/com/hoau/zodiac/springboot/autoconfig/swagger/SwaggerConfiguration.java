@@ -1,7 +1,9 @@
 package com.hoau.zodiac.springboot.autoconfig.swagger;
 
 import com.google.common.base.Predicates;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.request.async.DeferredResult;
@@ -19,36 +21,38 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * @date 2017/8/3
  */
 @Configuration
+@EnableConfigurationProperties(SwaggerProperties.class)
+@ConditionalOnProperty(prefix = "zodiac.swagger", name = "enable")
 @EnableSwagger2
 public class SwaggerConfiguration {
 
-    @Value("${spring.application.name}")
-    String applicationName;
-    @Value("${server.context-path}")
-    String contextPath;
+    @Autowired
+    SwaggerProperties swaggerProperties;
 
     @Bean
-    public Docket demoApi() {
+    public Docket swagger2Api() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .groupName(applicationName)
+                .groupName("doc")
                 .genericModelSubstitutes(DeferredResult.class)
                 .useDefaultResponseMessages(false)
                 .forCodeGeneration(false)
                 .pathMapping("/")
-                .select().paths(Predicates.or(PathSelectors.regex("/hello/.*")))//控制哪些接口暴露给Swagger
+                //控制哪些接口暴露给Swagger
+                .select().paths(Predicates.or(PathSelectors.regex(swaggerProperties.getPath()+"/.*")))
                 .build()
-                .apiInfo(demoApiInfo());//用来创建该Api的基本信息(这些基本信息会展现在文档页面中)
+                //用来创建该Api的基本信息(这些基本信息会展现在文档页面中)
+                .apiInfo(apiInfo());
     }
 
-    private ApiInfo demoApiInfo() {
+    private ApiInfo apiInfo() {
         ApiInfo apiInfo = new ApiInfo(
-                "SSO 系统接口目录",//标题
-                " SSO 对外提供的系统接口的统一说明",//副标题
-                "1.0",//版本
-                "仅限于华宇内部调用，外部调用会被起诉", //条款
-                "供应链研发中心",//作者
-                "华宇供应链 SSO 统一登录系统",//链接显示文字
-                ""+contextPath//网站链接
+                swaggerProperties.getTitle(),//标题
+                swaggerProperties.getDescription(),//副标题
+                swaggerProperties.getVersion(),//版本
+                swaggerProperties.getTermsOfServiceUrl(), //条款
+                swaggerProperties.getContactName(),//作者
+                swaggerProperties.getLicense(),//链接显示文字
+                swaggerProperties.getLicenseUrl()//网站链接
         );
         return apiInfo;
     }

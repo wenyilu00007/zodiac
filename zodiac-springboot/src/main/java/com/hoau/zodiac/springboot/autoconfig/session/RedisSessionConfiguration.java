@@ -1,5 +1,6 @@
 package com.hoau.zodiac.springboot.autoconfig.session;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.session.data.redis.config.ConfigureRedisAction;
@@ -15,6 +16,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 */
 @Configuration
 @EnableRedisHttpSession(maxInactiveIntervalInSeconds = 1800)
+@ConditionalOnProperty(prefix = "spring.session", name = "enable")
 public class RedisSessionConfiguration {
 
     /**

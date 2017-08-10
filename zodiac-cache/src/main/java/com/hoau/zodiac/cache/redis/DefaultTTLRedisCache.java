@@ -115,10 +115,11 @@ public abstract class DefaultTTLRedisCache<V> implements ICache<String, V>, Init
             //redis 连接出现异常
             value = cacheProvider.get(key);
             LOG.warn("redis连接出现异常，走数据库查询!");
+            LOG.error(exx);
             return value;
         } catch (Exception e){
             //其他异常
-            e.printStackTrace();
+            LOG.error(e);
             value = cacheProvider.get(key);
             return value;
         }

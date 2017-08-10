@@ -10,7 +10,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @description druid 数据源配置项
  * @date 2017/8/6
  */
-@ConfigurationProperties(prefix = "druid.datasource")
 public class DruidProperties {
 
     /**

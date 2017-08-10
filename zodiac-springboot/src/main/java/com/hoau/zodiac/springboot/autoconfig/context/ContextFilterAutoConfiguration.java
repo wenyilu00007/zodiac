@@ -3,6 +3,7 @@ package com.hoau.zodiac.springboot.autoconfig.context;
 import com.hoau.zodiac.core.constant.UrlConstants;
 import com.hoau.zodiac.web.filter.ContextFilter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +19,7 @@ import java.util.Arrays;
 * @version V1.0   
 */
 @Configuration
+@ConditionalOnProperty(prefix = "zodiac.web.context", name = "enable")
 public class ContextFilterAutoConfiguration {
 
     /**
@@ -29,9 +31,6 @@ public class ContextFilterAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public ContextFilter contextFilter() {
-//        FilterRegistrationBean registrationBean = new FilterRegistrationBean();
-//        registrationBean.setFilter(new ContextFilter());
-//        registrationBean.setUrlPatterns(Arrays.asList(UrlConstants.MATCH_ALL_URL_PATTERN));
         return new ContextFilter();
     }
 }

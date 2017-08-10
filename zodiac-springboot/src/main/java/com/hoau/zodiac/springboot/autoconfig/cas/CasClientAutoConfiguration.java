@@ -28,7 +28,7 @@ import java.util.Map;
 @Configuration
 @EnableConfigurationProperties(CasClientProperties.class)
 @AutoConfigureAfter({RedisSessionConfiguration.class})
-@ConditionalOnProperty(prefix = "zodiac.cas.client", name = "enable", matchIfMissing = true)
+@ConditionalOnProperty(name = "zodiac.cas.client.enable", havingValue = "true")
 public class CasClientAutoConfiguration {
 
     @Autowired

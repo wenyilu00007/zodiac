@@ -8,14 +8,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
-* @Title: DefaultAuthenticationRedirectStrategy
+* @Title: DemoAuthenticationRedirectStrategy
 * @Package com.hoau.framework.module.login.server.cas 
 * @Description: 自定义CAS校验连接器跳转规则
 * @author 陈宇霖  
 * @date 2017/7/19 21:46
 * @version V1.0   
 */
-public class DefaultAuthenticationRedirectStrategy implements AuthenticationRedirectStrategy {
+public class DemoAuthenticationRedirectStrategy implements AuthenticationRedirectStrategy {
 
     /**
      * 由于前端框架中使用的是iframe，菜单中是个独立的界面，
