@@ -3,12 +3,12 @@ package com.hoau.zodiac.web.request;
 /**
  * @author 刘德云
  * @version V1.0
- * @title: BaseVo
+ * @title: BaseVO
  * @package com.hoau.leo.common.vo
  * @description vo 基类
  * @date 2017/8/6
  */
-public class BaseVo {
+public class BaseVO {
 
     private int page;
 
