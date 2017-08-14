@@ -1,7 +1,7 @@
 ## Swagger
 
 在线接口文档生成
-- 开启：`zodiac.swagger2.enable=true`
+- 开启：`zodiac.swagger.enable=true`
 
 - 配置
 ```
