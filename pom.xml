@@ -15,7 +15,7 @@
         <module>zodiac-cache</module>
         <module>zodiac-log</module>
         <module>zodiac-datasource</module>
-        <module>zodic-demo</module>
+        <module>zodiac-demo</module>
     </modules>
 
     <properties>
