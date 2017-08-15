@@ -2,6 +2,8 @@ package com.hoau.zodiac.springboot.autoconfig.swagger;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.List;
+
 /**
  * @author 刘德云
  * @version V1.0
@@ -44,7 +46,7 @@ public class SwaggerProperties {
     /**
      * 文档生成接口路径
      */
-    private String path;
+    private List<String> paths;
 
     public String getTitle() {
         return title;
@@ -102,11 +104,11 @@ public class SwaggerProperties {
         this.licenseUrl = licenseUrl;
     }
 
-    public String getPath() {
-        return path;
+    public List<String> getPaths() {
+        return paths;
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public void setPaths(List<String> paths) {
+        this.paths = paths;
     }
 }

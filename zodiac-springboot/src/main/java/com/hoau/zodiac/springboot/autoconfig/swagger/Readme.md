@@ -12,7 +12,7 @@ zodiac:
     description: 微服务之 ID 生成服务，仅用于 ID 生成
     version: 1.0
     contactName: 供应链研发中心
-    path: /generator
+    paths: [/generator]
 ```
 
 - 使用
