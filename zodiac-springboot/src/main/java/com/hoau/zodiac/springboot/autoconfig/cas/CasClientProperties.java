@@ -73,6 +73,18 @@ public class CasClientProperties {
      */
     private String authenticationRedirectStrategyClass;
 
+    /**
+     * font main page url, use for backend redirect after login success
+     */
+    private String fontMainPageUrl;
+
+    /**
+     * Specify whether the filter should redirect the user agent after a
+     * successful validation to remove the ticket parameter from the query
+     * string.
+     */
+    private boolean redirectAfterValidation = true;
+
     public String getCasServerUrlPrefix() {
         return casServerUrlPrefix;
     }
@@ -159,5 +171,21 @@ public class CasClientProperties {
 
     public void setValidationExclusions(String validationExclusions) {
         this.validationExclusions = validationExclusions;
+    }
+
+    public String getFontMainPageUrl() {
+        return fontMainPageUrl;
+    }
+
+    public void setFontMainPageUrl(String fontMainPageUrl) {
+        this.fontMainPageUrl = fontMainPageUrl;
+    }
+
+    public boolean isRedirectAfterValidation() {
+        return redirectAfterValidation;
+    }
+
+    public void setRedirectAfterValidation(boolean redirectAfterValidation) {
+        this.redirectAfterValidation = redirectAfterValidation;
     }
 }

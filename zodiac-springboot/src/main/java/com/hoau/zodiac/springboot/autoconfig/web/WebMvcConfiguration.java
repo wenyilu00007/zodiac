@@ -4,6 +4,7 @@ import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter4;
 import com.hoau.zodiac.core.constant.UrlConstants;
 import com.hoau.zodiac.springboot.autoconfig.context.ContextFilterAutoConfiguration;
 import com.hoau.zodiac.web.filter.ContextFilter;
+import com.hoau.zodiac.web.filter.CorsFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -16,6 +17,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -68,11 +70,11 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter implements Appl
      */
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedHeaders("*")
-                .allowedMethods("*")
-                .allowedOrigins("*");
-        super.addCorsMappings(registry);
+//        registry.addMapping("/**")
+//                .allowedHeaders("*")
+//                .allowedMethods("*")
+//                .allowedOrigins("*");
+//        super.addCorsMappings(registry);
     }
 
     /**
@@ -88,6 +90,23 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter implements Appl
         FilterRegistrationBean registrationBean = new FilterRegistrationBean();
         registrationBean.setFilter(contextFilter);
         registrationBean.setUrlPatterns(Arrays.asList(UrlConstants.MATCH_ALL_URL_PATTERN));
+        return registrationBean;
+    }
+
+    /**
+     * 跨域过滤器实例
+     * @param corsFilter
+     * @return
+     * @author 陈宇霖
+     * @date 2017年08月08日00:17:11
+     */
+    @Bean
+    @ConditionalOnBean(CorsFilter.class)
+    public FilterRegistrationBean corsFilterRegistration(CorsFilter corsFilter) {
+        FilterRegistrationBean registrationBean = new FilterRegistrationBean();
+        registrationBean.setFilter(corsFilter);
+        registrationBean.setUrlPatterns(Arrays.asList(UrlConstants.MATCH_ALL_URL_PATTERN));
+        registrationBean.setOrder(Ordered.LOWEST_PRECEDENCE - 200);
         return registrationBean;
     }
 

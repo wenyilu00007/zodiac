@@ -87,6 +87,7 @@ public class CasClientAutoConfiguration {
         String exclusions = casClientProperties.getValidationExclusions();
         if (!StringUtils.isEmpty(exclusions)) {
             validationFilter.addInitParameter("ignorePattern", exclusions);
+            validationFilter.addInitParameter("redirectAfterValidation", String.valueOf(casClientProperties.isRedirectAfterValidation()));
         }
         validationFilter.setOrder(Ordered.LOWEST_PRECEDENCE - 90);
         return validationFilter;

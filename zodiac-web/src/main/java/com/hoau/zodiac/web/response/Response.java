@@ -13,6 +13,11 @@ import java.io.Serializable;
 public class Response<T> implements Serializable {
 
     /**
+     * 要求前端进行重定向的编码
+     */
+    public static final String ERROR_REDIRECT = "302";
+
+    /**
      * 校验类异常编码
      */
     public static final String ERROR_CODE_VALIDATE = "10000";

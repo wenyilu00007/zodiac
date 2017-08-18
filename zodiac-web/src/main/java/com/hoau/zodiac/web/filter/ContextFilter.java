@@ -1,12 +1,15 @@
 package com.hoau.zodiac.web.filter;
 
+import com.alibaba.fastjson.JSON;
 import com.hoau.zodiac.core.dataprovider.IUserProvider;
 import com.hoau.zodiac.core.entity.IUser;
 import com.hoau.zodiac.web.context.RequestContext;
 import com.hoau.zodiac.web.context.SessionContext;
 import com.hoau.zodiac.web.context.UserContext;
+import com.hoau.zodiac.web.response.Response;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.entity.ContentType;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -19,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.security.Principal;
 import java.util.*;
 
@@ -41,13 +45,13 @@ public class ContextFilter extends OncePerRequestFilter implements ApplicationCo
     /**
      * 不进行过滤的请求pattern
      */
-    private List<String> excludeUrlPattern = new ArrayList<String>(Arrays.asList("/health"));
+    private List<String> excludeUrlPatterns = new ArrayList<String>(Arrays.asList("/health"));
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String url = request.getServletPath();
         boolean matched = false;
-        for (String pattern : excludeUrlPattern) {
+        for (String pattern : excludeUrlPatterns) {
             matched = antPathMatcher.match(pattern, url);
             if (matched) {
                 break;
@@ -77,7 +81,7 @@ public class ContextFilter extends OncePerRequestFilter implements ApplicationCo
                 //如果没有接入cas的应用，后端必须是实现了session保持的，没有session则认为用户掉线了，所以这个地方不创建session
                 HttpSession session = SessionContext.getSession(false);
                 if (session == null) {
-                    httpResponse.sendRedirect("/");
+                    doRedirectReturn(httpRequest, httpResponse);
                     return;
                 }
                 //session保持的情况下，从session中获取用户id
@@ -94,26 +98,9 @@ public class ContextFilter extends OncePerRequestFilter implements ApplicationCo
 
             //如果还是没有用户id，那就有问题了吧
             if (StringUtils.isEmpty(userId)) {
-                if (!useCas) {
-                    SessionContext.invalidateSession();
-                    String withoutCasOfflineRedirectUrl = getEnvironment().getProperty("zodiac.web.context.withoutCasOfflineRedirectUrl");
-                    if (StringUtils.isEmpty(withoutCasOfflineRedirectUrl)) {
-                        httpResponse.sendRedirect(request.getContextPath());
-                    } else {
-                        httpResponse.sendRedirect(withoutCasOfflineRedirectUrl);
-                    }
-                    return;
-                } else {
-                    SessionContext.invalidateSession();
-                    //重定向到cas登出
-                    String casServerLogoutUrl = getEnvironment().getProperty("zodiac.cas.client.casServerLogoutUrl");
-                    String redirectServerUrl = getEnvironment().getProperty("zodiac.cas.client.redirectServerUrl");
-                    if (StringUtils.isEmpty(casServerLogoutUrl) || StringUtils.isEmpty(redirectServerUrl)) {
-                        throw new RuntimeException("Must Config casServerLogoutUrl and redirectServerUrl");
-                    }
-                    httpResponse.sendRedirect(casServerLogoutUrl + "?service=" + redirectServerUrl);
-                    return;
-                }
+                SessionContext.invalidateSession();
+                doRedirectReturn(httpRequest, httpResponse);
+                return;
             }
             RequestContext.setCurrentUserId(userId);
             SessionContext.setCurrentUserId(userId);
@@ -123,7 +110,7 @@ public class ContextFilter extends OncePerRequestFilter implements ApplicationCo
             if (userProvider == null) {
                 logger.error("系统异常，未实现用户信息提供接口！");
                 SessionContext.invalidateSession();
-                httpResponse.sendRedirect("/");
+                doRedirectReturn(httpRequest, httpResponse);
                 return;
             }
             //从提供者读取数据
@@ -131,7 +118,7 @@ public class ContextFilter extends OncePerRequestFilter implements ApplicationCo
             //如果通过用户id获取到的用户为空，则跳转到登陆界面
             if (user == null) {
                 SessionContext.invalidateSession();
-                httpResponse.sendRedirect("/");
+                doRedirectReturn(httpRequest, httpResponse);
                 return;
             }
             //将用户信息设置到UserContext中
@@ -146,6 +133,39 @@ public class ContextFilter extends OncePerRequestFilter implements ApplicationCo
         }
     }
 
+    /**
+     * 前端使用ajax
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    private void doRedirectReturn(HttpServletRequest request, HttpServletResponse response) throws IOException {
+//        request.getHeader("X-Requested-With");
+        response.setContentType(ContentType.APPLICATION_JSON.toString());
+        Response redirectResponse = new Response();
+        redirectResponse.setErrorCode(Response.ERROR_REDIRECT);
+        //判断应用是否接入了CAS统一登录
+        boolean useCas = "true".equals(getEnvironment().getProperty("zodiac.cas.client.enable"));
+        if (!useCas) {
+            String withoutCasOfflineRedirectUrl = getEnvironment().getProperty("zodiac.web.context.withoutCasOfflineRedirectUrl");
+            if (StringUtils.isEmpty(withoutCasOfflineRedirectUrl)) {
+                redirectResponse.setResult(request.getServletPath() + request.getContextPath());
+            } else {
+                redirectResponse.setResult(withoutCasOfflineRedirectUrl);
+            }
+        } else {
+            //重定向到cas登出
+            String casServerLogoutUrl = getEnvironment().getProperty("zodiac.cas.client.casServerLogoutUrl");
+            String redirectServerUrl = getEnvironment().getProperty("zodiac.cas.client.redirectServerUrl");
+            if (StringUtils.isEmpty(casServerLogoutUrl) || StringUtils.isEmpty(redirectServerUrl)) {
+                throw new RuntimeException("Must Config casServerLogoutUrl and redirectServerUrl");
+            }
+            redirectResponse.setResult(casServerLogoutUrl + "?service=" + redirectServerUrl);
+        }
+        PrintWriter writer = response.getWriter();
+        writer.write(JSON.toJSONString(redirectResponse));
+    }
+
     public void destroy() {
 
     }
@@ -154,12 +174,12 @@ public class ContextFilter extends OncePerRequestFilter implements ApplicationCo
         this.applicationContext = applicationContext;
     }
 
-    public List<String> getExcludeUrlPattern() {
-        return excludeUrlPattern;
+    public List<String> getExcludeUrlPatterns() {
+        return excludeUrlPatterns;
     }
 
-    public void setExcludeUrlPattern(List<String> excludeUrlPattern) {
-        this.excludeUrlPattern = excludeUrlPattern;
+    public void setExcludeUrlPatterns(List<String> excludeUrlPatterns) {
+        this.excludeUrlPatterns = excludeUrlPatterns;
     }
 
 }
