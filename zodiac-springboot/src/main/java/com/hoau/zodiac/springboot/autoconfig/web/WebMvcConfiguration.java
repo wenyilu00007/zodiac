@@ -5,6 +5,7 @@ import com.hoau.zodiac.core.constant.UrlConstants;
 import com.hoau.zodiac.springboot.autoconfig.context.ContextFilterAutoConfiguration;
 import com.hoau.zodiac.web.filter.ContextFilter;
 import com.hoau.zodiac.web.filter.CorsFilter;
+import com.hoau.zodiac.web.filter.IpWhiteListFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -63,21 +64,6 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter implements Appl
     }
 
     /**
-     * 增加跨域访问
-     * @param registry
-     * @author 刘德云
-     * @date 2017/8/6
-     */
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-//        registry.addMapping("/**")
-//                .allowedHeaders("*")
-//                .allowedMethods("*")
-//                .allowedOrigins("*");
-//        super.addCorsMappings(registry);
-    }
-
-    /**
      * 构建context过滤器实例
      * @param contextFilter
      * @return
@@ -107,6 +93,23 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter implements Appl
         registrationBean.setFilter(corsFilter);
         registrationBean.setUrlPatterns(Arrays.asList(UrlConstants.MATCH_ALL_URL_PATTERN));
         registrationBean.setOrder(Ordered.LOWEST_PRECEDENCE - 200);
+        return registrationBean;
+    }
+
+    /**
+     * ip白名单过滤器实例
+     * @param ipWhiteListFilter
+     * @return
+     * @author 陈宇霖
+     * @date 2017年08月18日14:14:59
+     */
+    @Bean
+    @ConditionalOnBean(IpWhiteListFilter.class)
+    public FilterRegistrationBean ipWhiteListFilterRegistration(IpWhiteListFilter ipWhiteListFilter) {
+        FilterRegistrationBean registrationBean = new FilterRegistrationBean();
+        registrationBean.setFilter(ipWhiteListFilter);
+        registrationBean.setUrlPatterns(Arrays.asList(UrlConstants.MATCH_ALL_URL_PATTERN));
+        registrationBean.setOrder(Ordered.LOWEST_PRECEDENCE - 20000);
         return registrationBean;
     }
 

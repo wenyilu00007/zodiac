@@ -12,7 +12,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
-import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
@@ -31,7 +30,7 @@ public class RestTemplateClient implements InitializingBean {
 	/**
 	 * Rest 调用
 	 */
-	private RestTemplate bodyRestTemplate;
+	private RestTemplate restTemplate;
 
 	/**
 	 * 连接工厂相关设置
@@ -44,7 +43,7 @@ public class RestTemplateClient implements InitializingBean {
 	private List<ClientHttpRequestInterceptor> interceptors;
 
 	public void afterPropertiesSet() throws Exception {
-		bodyRestTemplate = new RestTemplate();
+		restTemplate = new RestTemplate();
 		// httpClient连接池配置
 		PoolingHttpClientConnectionManager pollingConnectionManager = new PoolingHttpClientConnectionManager();
 		pollingConnectionManager.setMaxTotal(restfulTemplateProperties.getMaxTotal());
@@ -63,10 +62,10 @@ public class RestTemplateClient implements InitializingBean {
 		// 连接工厂
 		HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(
 				httpClient);
-		bodyRestTemplate.setRequestFactory(clientHttpRequestFactory);
+		restTemplate.setRequestFactory(clientHttpRequestFactory);
 		// 配置请求拦截器
 		if (!CollectionUtils.isEmpty(interceptors)) {
-			bodyRestTemplate.setInterceptors(interceptors);
+			restTemplate.setInterceptors(interceptors);
 		}
 	}
 
@@ -86,7 +85,7 @@ public class RestTemplateClient implements InitializingBean {
 	 */
 	public <T> T getForObject(String url, TypeReference<T> typeReference, Object... urlVariables) {
 		HttpEntity<String> entity = new HttpEntity<String>(getHttpHeaders());
-		String json = bodyRestTemplate.exchange(url, HttpMethod.GET, entity, String.class, urlVariables).getBody();
+		String json = restTemplate.exchange(url, HttpMethod.GET, entity, String.class, urlVariables).getBody();
 		return JSON.parseObject(json, typeReference);
 	}
 
@@ -109,35 +108,8 @@ public class RestTemplateClient implements InitializingBean {
 	public <T> T postForObject(String url, Object request, TypeReference<T> typeReference, Object... urlVariables) {
 		String requestJson = JSON.toJSONString(request);
 		HttpEntity<String> entity = new HttpEntity<String>(requestJson, getHttpHeaders());
-		String json = bodyRestTemplate.exchange(url, HttpMethod.POST, entity, String.class, urlVariables).getBody();
+		String json = restTemplate.exchange(url, HttpMethod.POST, entity, String.class, urlVariables).getBody();
 		return JSON.parseObject(json, typeReference);
-	}
-
-	/**
-	 * 原生get方法
-	 * @param url
-	 * @param responseType
-	 * @param urlVariables
-	 * @return
-	 * @author 陈宇霖
-	 * @date 2017年08月18日08:33:17
-	 */
-	public ResponseEntity getForEntity(String url, Class responseType, Object... urlVariables) {
-		return bodyRestTemplate.getForEntity(url, responseType, urlVariables);
-	}
-
-	/**
-	 * 原生的post方法
-	 * @param url
-	 * @param request
-	 * @param responseType
-	 * @param urlVariables
-	 * @return
-	 * @author 陈宇霖
-	 * @date 2017年08月18日08:33:35
-	 */
-	public ResponseEntity postForEntity(String url, Object request, Class responseType, Object... urlVariables) {
-		return bodyRestTemplate.postForEntity(url, request, responseType, urlVariables);
 	}
 
 	public HttpHeaders getHttpHeaders() {
@@ -161,5 +133,9 @@ public class RestTemplateClient implements InitializingBean {
 
 	public void setInterceptors(List<ClientHttpRequestInterceptor> interceptors) {
 		this.interceptors = interceptors;
+	}
+
+	public RestTemplate getRestTemplate() {
+		return restTemplate;
 	}
 }

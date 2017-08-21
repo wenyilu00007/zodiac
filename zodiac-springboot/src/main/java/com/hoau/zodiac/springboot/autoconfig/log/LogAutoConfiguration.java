@@ -36,7 +36,6 @@ public class LogAutoConfiguration {
      * @date 2017年08月02日18:24:57
      */
     @Bean
-    @ConditionalOnMissingBean
     @ConditionalOnWebApplication
     @ConditionalOnProperty(prefix = "zodiac.log.filter", name = "enable")
     public FilterRegistrationBean logFilterRegistrationBean() {
