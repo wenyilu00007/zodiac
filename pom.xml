@@ -28,7 +28,7 @@
         <druid.version>1.0.27</druid.version>
         <mysql.connector.version>5.1.41</mysql.connector.version>
         <mybatis.spring.boot.version>1.2.0</mybatis.spring.boot.version>
-        <pagehelp.verion>4.1.1</pagehelp.verion>
+        <pagehelp.starter.verion>1.1.2</pagehelp.starter.verion>
         <consul.config.version>1.2.1.RELEASE</consul.config.version>
         <cas.client.version>3.4.1</cas.client.version>
         <swagger.version>2.7.0</swagger.version>
@@ -151,8 +151,8 @@
             <!--分页插件-->
             <dependency>
                 <groupId>com.github.pagehelper</groupId>
-                <artifactId>pagehelper</artifactId>
-                <version>${pagehelp.verion}</version>
+                <artifactId>pagehelper-spring-boot-starter</artifactId>
+                <version>${pagehelp.starter.verion}</version>
             </dependency>
 
             <!--CAS client-->
