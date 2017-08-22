@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConditionalOnWebApplication
 @EnableConfigurationProperties(LocaleMessageProperties.class)
-@ConditionalOnProperty(prefix = "zodiac.web.securityAccess", name = "enable")
+@ConditionalOnProperty(prefix = "zodiac.security.accessControl", name = "enable")
 public class SecurityAccessAutoConfiguration {
 
     /**
@@ -44,7 +44,6 @@ public class SecurityAccessAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnProperty(prefix = "zodiac.web.securityAccess", name = "enable")
     public AccessInterceptor accessInterceptor() {
         return new AccessInterceptor();
     }

@@ -12,7 +12,7 @@ import java.util.List;
 * @date 2017/8/18 12:06
 * @version V1.0   
 */
-@ConfigurationProperties(prefix = "zodiac.web.ip.whitelist")
+@ConfigurationProperties(prefix = "zodiac.security.ip.whitelist")
 public class IpWhiteListProperties {
 
     /**

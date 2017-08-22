@@ -3,6 +3,7 @@ package com.hoau.zodiac.web.interceptor;
 import com.hoau.zodiac.core.exception.AccessNotAllowException;
 import com.hoau.zodiac.core.security.SecurityAccess;
 import com.hoau.zodiac.web.context.UserContext;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,9 +26,14 @@ public class AccessInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        boolean canAccess = SecurityAccess.checkCanAccess(UserContext.getCurrentUser(), request.getRequestURI(), ignoreNoneConfigUri);
-        if (!canAccess) {
-            throw new AccessNotAllowException();
+        if (handler instanceof HandlerMethod) {
+            HandlerMethod method = (HandlerMethod) handler;
+            if (!method.hasMethodAnnotation(AccessNonCheck.class)) {
+                boolean canAccess = SecurityAccess.checkCanAccess(UserContext.getCurrentUser(), request.getRequestURI(), ignoreNoneConfigUri);
+                if (!canAccess) {
+                    throw new AccessNotAllowException();
+                }
+            }
         }
         return super.preHandle(request, response, handler);
     }

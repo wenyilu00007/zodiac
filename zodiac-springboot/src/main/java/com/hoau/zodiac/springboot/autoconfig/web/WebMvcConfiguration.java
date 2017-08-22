@@ -6,10 +6,13 @@ import com.hoau.zodiac.springboot.autoconfig.context.ContextFilterAutoConfigurat
 import com.hoau.zodiac.web.filter.ContextFilter;
 import com.hoau.zodiac.web.filter.CorsFilter;
 import com.hoau.zodiac.web.filter.IpWhiteListFilter;
+import com.hoau.zodiac.web.filter.ParamsVerifyFilter;
+import com.hoau.zodiac.web.interceptor.AccessInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -20,7 +23,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.util.Arrays;
@@ -43,6 +46,12 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter implements Appl
 
     Logger logger = LoggerFactory.getLogger(WebMvcConfiguration.class);
 
+    private AccessInterceptor accessInterceptor;
+
+    public WebMvcConfiguration(ObjectProvider<AccessInterceptor> accessInterceptorObjectProvider) {
+        accessInterceptor = accessInterceptorObjectProvider.getIfAvailable();
+    }
+
     /**
      * 增加使用fastjson消息转换器
      * @param converters
@@ -61,6 +70,20 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter implements Appl
         if (converter != null) {
             converters.add(converter);
         }
+    }
+
+    /**
+     * 增加拦截器配置
+     * @param registry
+     * @author 陈宇霖
+     * @date 2017年08月22日15:14:12
+     */
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        if (accessInterceptor != null) {
+            registry.addInterceptor(accessInterceptor);
+        }
+        super.addInterceptors(registry);
     }
 
     /**
@@ -110,6 +133,23 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter implements Appl
         registrationBean.setFilter(ipWhiteListFilter);
         registrationBean.setUrlPatterns(Arrays.asList(UrlConstants.MATCH_ALL_URL_PATTERN));
         registrationBean.setOrder(Ordered.LOWEST_PRECEDENCE - 20000);
+        return registrationBean;
+    }
+
+    /**
+     * 参数签名校验过滤器实例
+     * @param paramsVerifyFilter
+     * @return
+     * @author 陈宇霖
+     * @date 2017年08月18日14:14:59
+     */
+    @Bean
+    @ConditionalOnBean(ParamsVerifyFilter.class)
+    public FilterRegistrationBean aramsVerifyFilterRegistration(ParamsVerifyFilter paramsVerifyFilter) {
+        FilterRegistrationBean registrationBean = new FilterRegistrationBean();
+        registrationBean.setFilter(paramsVerifyFilter);
+        registrationBean.setUrlPatterns(Arrays.asList(UrlConstants.MATCH_ALL_URL_PATTERN));
+        registrationBean.setOrder(Ordered.LOWEST_PRECEDENCE - 10000);
         return registrationBean;
     }
 

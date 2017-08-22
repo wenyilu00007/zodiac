@@ -1,6 +1,7 @@
 package com.hoau.zodiac.core.security;
 
 import com.hoau.zodiac.core.dataprovider.IResourceProvider;
+import com.hoau.zodiac.core.dataprovider.ISecureKeyProvider;
 import com.hoau.zodiac.core.dataprovider.IUserResourceProvider;
 import com.hoau.zodiac.core.entity.IResource;
 import com.hoau.zodiac.core.entity.IUser;
@@ -58,6 +59,18 @@ public class SecurityAccess implements ApplicationContextAware {
             return false;
         }
         return true;
+    }
+
+    /**
+     * 根据apiKey获取私钥
+     * @param apiKey
+     * @return
+     * @author 陈宇霖
+     * @date 2017年08月21日17:00:17
+     */
+    public static String getSecureKey(String apiKey) {
+        ISecureKeyProvider secureKeyProvider = applicationContext.getBean(ISecureKeyProvider.class);
+        return secureKeyProvider.getSecureKey(apiKey);
     }
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {

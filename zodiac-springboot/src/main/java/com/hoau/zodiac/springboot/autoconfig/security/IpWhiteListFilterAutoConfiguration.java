@@ -18,7 +18,7 @@ import org.springframework.util.CollectionUtils;
 */
 @Configuration
 @EnableConfigurationProperties(IpWhiteListProperties.class)
-@ConditionalOnProperty(prefix = "zodiac.web.ip.whitelist", name = "enable")
+@ConditionalOnProperty(prefix = "zodiac.security.ip.whitelist", name = "enable")
 public class IpWhiteListFilterAutoConfiguration {
 
     @Autowired
