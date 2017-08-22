@@ -45,3 +45,5 @@
     - 非GET请求token生成逻辑
         1. 将请求体数据使用fastjson转换成JSON字符串
         2. 调用`MD5Utils.sign(requestBody, SECURITY_KEY, "UTF-8")`即可生成token
+- 启用此拦截器需要额外增加的内容
+    - 应用必须实现`ISecureKeyProvider`接口，用于根据apiKey获取对应的私钥。
