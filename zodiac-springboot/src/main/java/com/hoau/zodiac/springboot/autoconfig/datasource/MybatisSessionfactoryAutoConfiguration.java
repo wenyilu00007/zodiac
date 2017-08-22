@@ -44,9 +44,6 @@ public class MybatisSessionfactoryAutoConfiguration implements TransactionManage
     @Bean(name = "sqlSessionFactory")
     public SqlSessionFactoryBean createSqlSessionFactoryBean() throws Exception {
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
-        PageHelper pageHelper = new PageHelper();
-        // 添加pagehelper插件
-        sqlSessionFactoryBean.setPlugins(new Interceptor[]{pageHelper});
         // 设置datasource
         sqlSessionFactoryBean.setDataSource(dataSource);
         return sqlSessionFactoryBean;
