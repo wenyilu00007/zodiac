@@ -487,6 +487,7 @@
             default-country: CN
             default-lang: zh
             cookie-maxAge: 100000000
+            cookieLanguageNameKey:language
         ```
    - 项目使用国际化
         - 在resource目录下增加默认国际化文件`messages.properties`，此文件为Locale未匹配到时的默认国际化文件，必须创建

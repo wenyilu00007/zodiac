@@ -55,7 +55,8 @@ public class LocaleMessageAutoConfiguration {
     @Bean
     public LocaleResolver localeResolver() {
         CookieLocaleResolver cookieLocaleResolver = new CookieLocaleResolver();
-        cookieLocaleResolver.setCookieName(CookieConstants.COOKIE_LANGUAGE_NAME);
+        cookieLocaleResolver.setCookieName(localeMessageProperties.getCookieLanguageNameKey());
+        cookieLocaleResolver.setLanguageTagCompliant(true);
         if (StringUtils.isEmpty(localeMessageProperties.getDefaultCountry())
                 || StringUtils.isEmpty(localeMessageProperties.getDefaultLang())) {
             cookieLocaleResolver.setDefaultLocale(Locale.CHINA);

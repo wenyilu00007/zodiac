@@ -32,6 +32,10 @@ public class LocaleMessageProperties {
      * cookie保存时间
      */
     private int cookieMaxAge;
+    /**
+     * Cookie中存储语言的键
+     */
+    private String cookieLanguageNameKey;
 
     public boolean isEnable() {
         return enable;
@@ -63,5 +67,13 @@ public class LocaleMessageProperties {
 
     public void setCookieMaxAge(int cookieMaxAge) {
         this.cookieMaxAge = cookieMaxAge;
+    }
+
+    public String getCookieLanguageNameKey() {
+        return cookieLanguageNameKey;
+    }
+
+    public void setCookieLanguageNameKey(String cookieLanguageNameKey) {
+        this.cookieLanguageNameKey = cookieLanguageNameKey;
     }
 }
