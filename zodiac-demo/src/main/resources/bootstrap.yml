@@ -1,21 +1,21 @@
-#spring:
-#  application:
-#    name: zodic
-#  cloud:
-#    consul:
-#      enabled: false
-#      host: 10.39.232.220
-#      port: 8500
-#      config:
-#        enabled: true
-#        format: YAML
-#        data-key: configuration
-#      discovery:
-#        enabled: true
-#        instanceId: ${spring.application.name}-${spring.cloud.consul.host}-${spring.cloud.consul.port}
-#        serviecName: ${spring.application.name}
-#        health-check-interval: 30s
-#        healthCheckPath: /${spring.application.name}/health
-#        preferIpAddress: true
-#  aop:
-#    auto: true
+spring:
+  application:
+    name: zodic
+  cloud:
+    consul:
+      enabled: true
+      host: 10.39.232.220
+      port: 8500
+      config:
+        enabled: true
+        format: YAML
+        data-key: configuration
+      discovery:
+        enabled: true
+        instanceId: ${spring.application.name}-${spring.cloud.consul.host}-${spring.cloud.consul.port}
+        serviecName: ${spring.application.name}
+        health-check-interval: 30s
+        healthCheckPath: /${spring.application.name}/health
+        preferIpAddress: true
+  aop:
+    auto: true

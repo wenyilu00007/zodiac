@@ -8,10 +8,11 @@ server:
 spring:
   redis:
     enable: true
-    database: 0
+    database: 3
+    password: testx
     sentinel:
       master: mymaster
-      nodes: 10.39.232.215:26379,10.39.232.215:26479,10.39.232.215:26579
+      nodes: 10.39.232.213:26380,10.39.232.214:26380,10.39.232.215:26380
     pool:
       max-idle: -1
       max-wait: 3000
