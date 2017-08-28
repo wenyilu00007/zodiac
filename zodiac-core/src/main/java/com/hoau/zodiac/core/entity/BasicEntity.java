@@ -5,6 +5,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 /**
 * @Title: BasicEntity
@@ -48,6 +49,22 @@ public class BasicEntity implements Serializable {
     @Column(name = "modify_user_code")
     private String modifyUserCode;
 
+    /**
+     * 选择器查询参数
+     */
+    @Transient
+    private String queryParams;
+    /**
+     * 实际值
+     */
+    @Transient
+    private String  value;
+    /**
+     * 显示值
+     */
+    @Transient
+    private String displayName;
+
     public String getId() {
         return id;
     }
@@ -86,5 +103,29 @@ public class BasicEntity implements Serializable {
 
     public void setModifyUserCode(String modifyUserCode) {
         this.modifyUserCode = modifyUserCode;
+    }
+
+    public String getQueryParams() {
+        return queryParams;
+    }
+
+    public void setQueryParams(String queryParams) {
+        this.queryParams = queryParams;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 }
