@@ -15,6 +15,7 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.ApplicationContext;
@@ -104,18 +105,17 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter implements Appl
 
     /**
      * 跨域过滤器实例
-     * @param corsFilter
      * @return
      * @author 陈宇霖
      * @date 2017年08月08日00:17:11
      */
     @Bean
-    @ConditionalOnBean(CorsFilter.class)
-    public FilterRegistrationBean corsFilterRegistration(CorsFilter corsFilter) {
+    @ConditionalOnProperty(prefix = "zodiac.web.cors", name = "enable")
+    public FilterRegistrationBean corsFilterRegistration() {
         FilterRegistrationBean registrationBean = new FilterRegistrationBean();
-        registrationBean.setFilter(corsFilter);
+        registrationBean.setFilter(new CorsFilter());
         registrationBean.setUrlPatterns(Arrays.asList(UrlConstants.MATCH_ALL_URL_PATTERN));
-        registrationBean.setOrder(Ordered.LOWEST_PRECEDENCE - 200);
+        registrationBean.setOrder(Ordered.HIGHEST_PRECEDENCE);
         return registrationBean;
     }
 

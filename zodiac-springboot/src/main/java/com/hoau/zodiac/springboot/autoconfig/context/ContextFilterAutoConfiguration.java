@@ -40,10 +40,4 @@ public class ContextFilterAutoConfiguration {
         contextFilter.setExcludeUrlPatterns(contextFilterProperties.getExcludeUrlPatterns());
         return contextFilter;
     }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public CorsFilter corsFilter() {
-        return new CorsFilter();
-    }
 }
