@@ -1,21 +1,27 @@
 package com.hoau.zodiac.springboot.autoconfig.cas;
 
+import com.alibaba.fastjson.JSON;
+import com.hoau.zodiac.web.response.Response;
+import org.apache.http.entity.ContentType;
 import org.jasig.cas.client.authentication.AuthenticationRedirectStrategy;
 import org.jasig.cas.client.util.CommonUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
-* @Title: DemoAuthenticationRedirectStrategy
+* @Title: ZodiacAuthenticationRedirectStrategy
 * @Package com.hoau.framework.module.login.server.cas 
 * @Description: 自定义CAS校验连接器跳转规则
 * @author 陈宇霖  
 * @date 2017/7/19 21:46
 * @version V1.0   
 */
-public class DemoAuthenticationRedirectStrategy implements AuthenticationRedirectStrategy {
+public class ZodiacAuthenticationRedirectStrategy implements AuthenticationRedirectStrategy {
+
+    private String alwaysRedirectServerUrl;
 
     /**
      * 由于前端框架中使用的是iframe，菜单中是个独立的界面，
@@ -28,12 +34,13 @@ public class DemoAuthenticationRedirectStrategy implements AuthenticationRedirec
      */
     public void redirect(final HttpServletRequest request, final HttpServletResponse response,
                          final String potentialRedirectUrl) throws IOException {
-//        String alwaysRedirectServerUrl = configGroup.get("cas.auth.fail.always.redirect.server.url");
-//        property == null ? "" : property.getProperty("cas.auth.fail.always.redirect.server.url");
         //只有配置了重定向地址的才进行处理
-        String alwaysRedirectServerUrl = "http://10.39.117.142:8089/#/leo";
+        response.setContentType(ContentType.APPLICATION_JSON.toString());
+        Response redirectResponse = new Response();
+        redirectResponse.setErrorCode("302");
         if (CommonUtils.isBlank(alwaysRedirectServerUrl)) {
-            response.sendRedirect(potentialRedirectUrl);
+//            response.sendRedirect(potentialRedirectUrl);
+            redirectResponse.setResult(potentialRedirectUrl);
         } else {
             //入参中的potentialRedirectUrl是由AuthenticationFilter拼接过的，拼接的逻辑如下，所以要进行拆分，将原来的跳转地址抽取出来换掉
 //        casServerLoginUrl + (casServerLoginUrl.contains("?") ? "&" : "?") + serviceParameterName + "="
@@ -61,8 +68,18 @@ public class DemoAuthenticationRedirectStrategy implements AuthenticationRedirec
             }
             finalRedirectUrl = casServerLoginUrl + serviceParameterName + "=" + CommonUtils.urlEncode(alwaysRedirectServerUrl)
                     + (renew ? "&renew=true" : "") + (gateway ? "&gateway=true" : "");
-            response.sendRedirect(finalRedirectUrl);
+//            response.sendRedirect(finalRedirectUrl);
+            redirectResponse.setResult(finalRedirectUrl);
         }
+        PrintWriter writer = response.getWriter();
+        writer.write(JSON.toJSONString(redirectResponse));
     }
 
+    public String getAlwaysRedirectServerUrl() {
+        return alwaysRedirectServerUrl;
+    }
+
+    public void setAlwaysRedirectServerUrl(String alwaysRedirectServerUrl) {
+        this.alwaysRedirectServerUrl = alwaysRedirectServerUrl;
+    }
 }

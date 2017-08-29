@@ -1,7 +1,6 @@
 package com.hoau.zodiac.springboot.autoconfig.cas;
 
 import com.hoau.zodiac.springboot.autoconfig.session.RedisSessionConfiguration;
-import org.jasig.cas.client.authentication.AuthenticationFilter;
 import org.jasig.cas.client.util.HttpServletRequestWrapperFilter;
 import org.jasig.cas.client.validation.Cas30ProxyReceivingTicketValidationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,12 +41,14 @@ public class CasClientAutoConfiguration {
      */
     @Bean
     public FilterRegistrationBean casAuthenticationFilter() {
-        FilterRegistrationBean authenticationFilter = new FilterRegistrationBean();
-        authenticationFilter.setFilter(new AuthenticationFilter());
-        authenticationFilter.setInitParameters(generateAuthenticationFilterInitParameter());
-        authenticationFilter.setUrlPatterns(casClientProperties.getAuthenticationUrlPatterns());
-        authenticationFilter.setOrder(Ordered.LOWEST_PRECEDENCE - 100);
-        return authenticationFilter;
+        FilterRegistrationBean authenticationRegistrationBean = new FilterRegistrationBean();
+        ZodiacAuthenticationFilter zodiacAuthenticationFilter = new ZodiacAuthenticationFilter();
+        zodiacAuthenticationFilter.setAlwaysRedirectServerUrl(casClientProperties.getRedirectServerUrl());
+        authenticationRegistrationBean.setFilter(zodiacAuthenticationFilter);
+        authenticationRegistrationBean.setInitParameters(generateAuthenticationFilterInitParameter());
+        authenticationRegistrationBean.setUrlPatterns(casClientProperties.getAuthenticationUrlPatterns());
+        authenticationRegistrationBean.setOrder(Ordered.LOWEST_PRECEDENCE - 100);
+        return authenticationRegistrationBean;
     }
 
     /**
