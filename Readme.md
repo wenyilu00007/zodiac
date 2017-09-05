@@ -10,7 +10,7 @@
 <dependency>
     <groupId>com.hoau.zodiac</groupId>
     <artifactId>zodiac-springboot</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 </dependency>
 ```
 
