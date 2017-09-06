@@ -60,6 +60,11 @@
             <version>1.0</version>
         </dependency>
         <dependency>
+            <groupId>com.hoau.zodiac</groupId>
+            <artifactId>zodiac-log</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.jasig.cas.client</groupId>
             <artifactId>cas-client-core</artifactId>
         </dependency>
