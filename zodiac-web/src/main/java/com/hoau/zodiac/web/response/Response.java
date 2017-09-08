@@ -33,11 +33,6 @@ public class Response<T> implements Serializable {
     public static final String ERROR_CODE_UNHANDLED_EXCEPTION = "90000";
 
     /**
-     * 无权访问国际化key
-     */
-    public static final String NO_RIGHT_TO_ACCESS_MSG_BUNDLE_KEY = "error.user.no.right.to.access";
-
-    /**
      * 请求id，系统异常时需要将此参数传递到前台去
      */
     private String requestId;

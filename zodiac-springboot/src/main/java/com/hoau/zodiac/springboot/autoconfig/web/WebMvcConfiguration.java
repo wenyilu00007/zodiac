@@ -8,11 +8,13 @@ import com.hoau.zodiac.web.filter.CorsFilter;
 import com.hoau.zodiac.web.filter.IpWhiteListFilter;
 import com.hoau.zodiac.web.filter.ParamsVerifyFilter;
 import com.hoau.zodiac.web.interceptor.AccessInterceptor;
+import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -20,13 +22,17 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplicat
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.validation.beanvalidation.MessageSourceResourceBundleLocator;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import javax.validation.Validation;
+import javax.validation.Validator;
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,9 +49,12 @@ import java.util.List;
 @AutoConfigureAfter(ContextFilterAutoConfiguration.class)
 public class WebMvcConfiguration extends WebMvcConfigurerAdapter implements ApplicationContextAware{
 
-    private ApplicationContext applicationContext;
-
     Logger logger = LoggerFactory.getLogger(WebMvcConfiguration.class);
+
+    @Autowired
+    private MessageSource messageSource;
+
+    private ApplicationContext applicationContext;
 
     private AccessInterceptor accessInterceptor;
 
@@ -151,6 +160,26 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter implements Appl
         registrationBean.setUrlPatterns(Arrays.asList(UrlConstants.MATCH_ALL_URL_PATTERN));
         registrationBean.setOrder(Ordered.LOWEST_PRECEDENCE - 10000);
         return registrationBean;
+    }
+
+    /**
+     * 创建参数校验validator
+     * @return
+     * @author 陈宇霖
+     * @date 2017年09月08日08:50:46
+     */
+    @Bean
+    public Validator validator () {
+        Validator validator = Validation.byDefaultProvider()
+                .configure()
+                .messageInterpolator(
+                        new ResourceBundleMessageInterpolator(
+                                new MessageSourceResourceBundleLocator(messageSource)
+                        )
+                )
+                .buildValidatorFactory()
+                .getValidator();
+        return validator;
     }
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {

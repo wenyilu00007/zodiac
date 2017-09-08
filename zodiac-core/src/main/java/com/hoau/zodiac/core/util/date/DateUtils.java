@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * 日期工具类
@@ -31,6 +32,8 @@ public class DateUtils {
 
     public static final String DC_DATE_FORMAT = "yyyy/MM/dd";
     public static final String DC_TIME_FORMAT = "yyyy/MM/dd HH:mm:ss";
+
+    public static final String ZONED_DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
 
 	private DateUtils() {
 	}
@@ -492,4 +495,36 @@ public class DateUtils {
         calendar.add(Calendar.MONTH,-1);
         return calendar.getTime();
     }
+
+	/**
+	 * 从<code>DateUtils.ZONED_DATE_TIME_FORMAT</code>格式的时间中获取时区信息
+	 * @param date	yyyy-MM-dd'T'HH:mm:ssZ 	时间格式字符串
+	 * @return	-12~12之间的数字
+	 * @throws ParseException
+	 * @author 陈宇霖
+	 * @date  2017年09月07日19:41:31
+	 */
+    public static Integer getTimeZone(String date) throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat(ZONED_DATE_TIME_FORMAT);
+		sdf.parse(date);
+		String zoneFlag = date.substring(19, 20);
+		Integer zoneValue = Integer.parseInt(date.substring(20, 22));
+		if (zoneValue > 12 || zoneValue < -12) {
+			throw new ParseException("error ZoneValue!", zoneValue);
+		}
+		return Integer.parseInt(zoneFlag + zoneValue);
+	}
+
+	/**
+	 * 获取 yyyy-MM-dd'T'HH:mm:ssZ 	时间格式字符串对应的unix时间戳
+	 * @param date		yyyy-MM-dd'T'HH:mm:ssZ 	时间格式字符串
+	 * @return			unix时间戳
+	 * @throws ParseException
+	 * @author 陈宇霖
+	 * @date 2017年09月07日20:56:26
+	 */
+	public static Long getTimeStamp(String date) throws ParseException {
+    	SimpleDateFormat sdf = new SimpleDateFormat(ZONED_DATE_TIME_FORMAT);
+    	return sdf.parse(date).getTime();
+	}
 }

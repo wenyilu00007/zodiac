@@ -17,7 +17,7 @@ public class AccessNotAllowException extends RuntimeException {
 	/**
 	 * 默认国际化编码
 	 */
-	public static final String ERROR_CODE = "ERROR.SECURITY.NOT.ALLOW";
+	public static final String ERROR_CODE = "error.user.no.right.to.access";
 
 	/**
 	 * 默认异常提示内容

@@ -20,7 +20,6 @@ import org.springframework.context.annotation.Configuration;
 */
 @Configuration
 @ConditionalOnWebApplication
-@EnableConfigurationProperties(LocaleMessageProperties.class)
 @ConditionalOnProperty(prefix = "zodiac.security.accessControl", name = "enable")
 public class SecurityAccessAutoConfiguration {
 

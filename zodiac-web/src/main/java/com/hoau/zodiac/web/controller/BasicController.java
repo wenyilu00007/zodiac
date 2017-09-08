@@ -9,6 +9,7 @@ import com.hoau.zodiac.web.response.PageResponse;
 import com.hoau.zodiac.web.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -97,6 +98,45 @@ public class BasicController {
     }
 
     /**
+     * 返回参数校验失败信息
+     * @param errorMsg      参数校验失败信息
+     * @return
+     * @author 陈宇霖
+     * @date 2017年09月07日21:12:53
+     */
+    public Response returnValidateError(String errorMsg) {
+        Response response = new Response();
+        response.setSuccess(false);
+        response.setHasBusinessException(true);
+        response.setErrorCode(Response.ERROR_CODE_VALIDATE);
+        response.setMessage(localeMessageSource.getMessage(errorMsg));
+        response.setErrorCode(Response.ERROR_CODE_VALIDATE);
+        response.setErrorMsg(errorMsg);
+        return response;
+    }
+
+    /**
+     * 返回参数校验失败
+     * @param bindingResult     校验框架校验的结果
+     * @return
+     * @author 陈宇霖
+     * @date 2017年09月07日16:59:22
+     */
+    public Response returnValidateError(BindingResult bindingResult) {
+        Response response = new Response();
+        response.setSuccess(false);
+        response.setHasBusinessException(true);
+        StringBuffer errorMsg = new StringBuffer();
+        bindingResult.getFieldErrors().forEach(fieldError -> {
+            errorMsg.append(localeMessageSource.getMessage(fieldError.getDefaultMessage(), fieldError.getArguments())).append("\n");
+        });
+        response.setMessage(errorMsg.toString());
+        response.setErrorCode(Response.ERROR_CODE_VALIDATE);
+        response.setErrorMsg(errorMsg.toString());
+        return response;
+    }
+
+    /**
      * 统一的请求异常处理，所有异常都转换为json输入到前台，前端根据返回结果进行判断如何展示异常信息
      *
      * @param exception
@@ -113,9 +153,9 @@ public class BasicController {
 
         if (exception instanceof AccessNotAllowException) { //无权访问
             response.setHasBusinessException(true);
-            response.setMessage(localeMessageSource.getMessage(Response.NO_RIGHT_TO_ACCESS_MSG_BUNDLE_KEY));
+            response.setMessage(localeMessageSource.getMessage(((AccessNotAllowException)exception).getErrorCode()));
             response.setErrorCode(Response.ERROR_CODE_VALIDATE);
-            response.setErrorMsg(localeMessageSource.getMessage(Response.NO_RIGHT_TO_ACCESS_MSG_BUNDLE_KEY));
+            response.setErrorMsg(localeMessageSource.getMessage(((AccessNotAllowException)exception).getErrorCode()));
         } else if (exception instanceof BusinessException) {    //业务异常
             response.setHasBusinessException(true);
             response.setMessage(localeMessageSource.getMessage(((BusinessException)exception).getErrorCode(), ((BusinessException)exception).getErrorArguments()));
