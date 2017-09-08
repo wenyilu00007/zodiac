@@ -9,7 +9,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 
 /**
  * 日期工具类
@@ -497,18 +496,38 @@ public class DateUtils {
     }
 
 	/**
-	 * 从<code>DateUtils.ZONED_DATE_TIME_FORMAT</code>格式的时间中获取时区信息
-	 * @param date	yyyy-MM-dd'T'HH:mm:ssZ 	时间格式字符串
+	 * 将yyyy-MM-dd'T'HH:mm:ssZ格式的时间字符串转换成yyyy-MM-dd HH:mm:ss格式
+	 * @param dateStr	yyyy-MM-dd'T'HH:mm:ssZ 	时间格式字符串
+	 * @return
+	 * @author 陈宇霖
+	 * @date 2017年09月08日16:30:58
+	 */
+	public static String getZonedDateTime(String dateStr) throws ParseException {
+		//先尝试转换时间，如果转换报错，说明格式不对
+		SimpleDateFormat sdf = new SimpleDateFormat(ZONED_DATE_TIME_FORMAT);
+		sdf.parse(dateStr);
+		String dateTimeStr = dateStr.substring(0, 19);
+		String[] dateTime = dateTimeStr.split("T");
+    	return dateTime[0] + " " + dateTime[1].substring(0, 8);
+	}
+
+	public static void main(String[] args) throws ParseException {
+		System.out.printf(getZonedDateTime("2017-09-06T16:20:29+0900"));
+	}
+
+	/**
+	 * 从yyyy-MM-dd'T'HH:mm:ssZ格式的时间中获取时区信息
+	 * @param dateStr	yyyy-MM-dd'T'HH:mm:ssZ 	时间格式字符串
 	 * @return	-12~12之间的数字
 	 * @throws ParseException
 	 * @author 陈宇霖
 	 * @date  2017年09月07日19:41:31
 	 */
-    public static Integer getTimeZone(String date) throws ParseException {
+    public static Integer getTimeZone(String dateStr) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat(ZONED_DATE_TIME_FORMAT);
-		sdf.parse(date);
-		String zoneFlag = date.substring(19, 20);
-		Integer zoneValue = Integer.parseInt(date.substring(20, 22));
+		sdf.parse(dateStr);
+		String zoneFlag = dateStr.substring(19, 20);
+		Integer zoneValue = Integer.parseInt(dateStr.substring(20, 22));
 		if (zoneValue > 12 || zoneValue < -12) {
 			throw new ParseException("error ZoneValue!", zoneValue);
 		}
@@ -517,14 +536,14 @@ public class DateUtils {
 
 	/**
 	 * 获取 yyyy-MM-dd'T'HH:mm:ssZ 	时间格式字符串对应的unix时间戳
-	 * @param date		yyyy-MM-dd'T'HH:mm:ssZ 	时间格式字符串
+	 * @param dateStr		yyyy-MM-dd'T'HH:mm:ssZ 	时间格式字符串
 	 * @return			unix时间戳
 	 * @throws ParseException
 	 * @author 陈宇霖
 	 * @date 2017年09月07日20:56:26
 	 */
-	public static Long getTimeStamp(String date) throws ParseException {
+	public static Long getTimeStamp(String dateStr) throws ParseException {
     	SimpleDateFormat sdf = new SimpleDateFormat(ZONED_DATE_TIME_FORMAT);
-    	return sdf.parse(date).getTime();
+    	return sdf.parse(dateStr).getTime();
 	}
 }
