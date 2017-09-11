@@ -12,7 +12,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 
-import javax.annotation.Resource;
 import java.util.Locale;
 
 /**
@@ -32,22 +31,19 @@ public class LocaleMessageAutoConfiguration {
     @Autowired
     private LocaleMessageProperties localeMessageProperties;
 
-    @Autowired
-    private MessageSource messageSource;
-
-//    /**
-//     * 创建国际化资源
-//     * @return
-//     * @author 陈宇霖
-//     * @date 2017年09月08日08:49:49
-//     */
-//    @Bean
-//    public MessageSource validateMessageSource() {
-//        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-//        messageSource.setBasename("classpath:message");
-//        messageSource.setDefaultEncoding("UTF-8");
-//        return messageSource;
-//    }
+    /**
+     * 创建国际化资源
+     * @return
+     * @author 陈宇霖
+     * @date 2017年09月08日08:49:49
+     */
+    @Bean
+    public MessageSource messageSource() {
+        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        messageSource.setBasename("classpath:message");
+        messageSource.setDefaultEncoding("UTF-8");
+        return messageSource;
+    }
 
     /**
      * 实例化自动以的国际化消息获取类
@@ -58,7 +54,7 @@ public class LocaleMessageAutoConfiguration {
     @Bean
     public LocaleMessageSource localeMessageSource() {
         LocaleMessageSource localeMessageSource = new LocaleMessageSource();
-        localeMessageSource.setMessageSource(messageSource);
+        localeMessageSource.setMessageSource(messageSource());
         return localeMessageSource;
     }
 

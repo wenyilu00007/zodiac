@@ -52,8 +52,8 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter implements Appl
 
     Logger logger = LoggerFactory.getLogger(WebMvcConfiguration.class);
 
-//    @Autowired
-//    private MessageSource messageSource;
+    @Autowired
+    private MessageSource messageSource;
 
     private ApplicationContext applicationContext;
 
@@ -163,25 +163,25 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter implements Appl
         return registrationBean;
     }
 
-//    /**
-//     * 创建参数校验validator
-//     * @return
-//     * @author 陈宇霖
-//     * @date 2017年09月08日08:50:46
-//     */
-//    @Bean
-//    public Validator validator () {
-//        Validator validator = Validation.byDefaultProvider()
-//                .configure()
-//                .messageInterpolator(
-//                        new ResourceBundleMessageInterpolator(
-//                                new MessageSourceResourceBundleLocator(messageSource)
-//                        )
-//                )
-//                .buildValidatorFactory()
-//                .getValidator();
-//        return validator;
-//    }
+    /**
+     * 创建参数校验validator
+     * @return
+     * @author 陈宇霖
+     * @date 2017年09月08日08:50:46
+     */
+    @Bean
+    public Validator validator () {
+        Validator validator = Validation.byDefaultProvider()
+                .configure()
+                .messageInterpolator(
+                        new ResourceBundleMessageInterpolator(
+                                new MessageSourceResourceBundleLocator(messageSource)
+                        )
+                )
+                .buildValidatorFactory()
+                .getValidator();
+        return validator;
+    }
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
