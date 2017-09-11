@@ -10,6 +10,7 @@ import com.hoau.zodiac.web.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -161,6 +162,15 @@ public class BasicController {
             response.setMessage(localeMessageSource.getMessage(((BusinessException)exception).getErrorCode(), ((BusinessException)exception).getErrorArguments()));
             response.setErrorCode(Response.ERROR_CODE_BUSINESS_EXCEPTION);
             response.setErrorMsg(localeMessageSource.getMessage(((BusinessException)exception).getErrorCode(), ((BusinessException)exception).getErrorArguments()));
+        } else if (exception instanceof MethodArgumentNotValidException) { //参数校验失败异常
+            BindingResult bindingResult = ((MethodArgumentNotValidException)exception).getBindingResult();
+            StringBuffer errorMsg = new StringBuffer();
+            bindingResult.getFieldErrors().forEach(fieldError -> {
+                errorMsg.append(fieldError.getDefaultMessage()).append("\n");
+            });
+            response.setMessage(errorMsg.toString());
+            response.setErrorCode(Response.ERROR_CODE_VALIDATE);
+            response.setErrorMsg(errorMsg.toString());
         } else { //未捕获异常
             response.setRequestId(RequestContext.getRequestId());
             response.setHasBusinessException(false);

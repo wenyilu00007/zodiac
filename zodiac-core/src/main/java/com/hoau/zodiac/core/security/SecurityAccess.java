@@ -26,22 +26,24 @@ public class SecurityAccess implements ApplicationContextAware {
 
     /**
      * 校验是否有权限访问指定地址
+     * @param user                  访问的用户
+     * @param systemCode            访问的系统
      * @param requestUri            访问的地址
      * @param ignoreNoneConfigUri   是否忽略未配置的地址
      * @return
      * @author 陈宇霖
      * @date 2017年08月06日09:49:00
      */
-    public static boolean checkCanAccess(IUser user, String requestUri, boolean ignoreNoneConfigUri) {
+    public static boolean checkCanAccess(IUser user, String systemCode, String requestUri, boolean ignoreNoneConfigUri) {
         IUserResourceProvider userResourceProvider = applicationContext.getBean(IUserResourceProvider.class);
         if (userResourceProvider != null) {
-            List<IResource> resources = userResourceProvider.getResources(user);
+            List<IResource> resources = userResourceProvider.getResources(user, systemCode);
             if (CollectionUtils.isEmpty(resources)) {
                 return false;
             }
             IResourceProvider resourceProvider = applicationContext.getBean(IResourceProvider.class);
             if (resourceProvider != null) {
-                IResource requestResource = resourceProvider.getResource(requestUri);
+                IResource requestResource = resourceProvider.getResource(requestUri, systemCode);
                 if (requestResource == null) {
                     if (ignoreNoneConfigUri) {
                         return true;

@@ -15,10 +15,11 @@ public interface IResourceProvider {
     /**
      * 根据请求的uri构建resource对象
      * @param accessUri
+     * @param systemCode
      * @return
      * @author 陈宇霖
      * @date 2017年08月06日09:26:04
      */
-    IResource getResource(String accessUri);
+    IResource getResource(String accessUri, String systemCode);
 
 }

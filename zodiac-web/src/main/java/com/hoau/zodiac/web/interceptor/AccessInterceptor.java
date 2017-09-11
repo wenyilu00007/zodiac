@@ -24,12 +24,17 @@ public class AccessInterceptor extends HandlerInterceptorAdapter {
      */
     private boolean ignoreNoneConfigUri = true;
 
+    /**
+     * 拦截的系统编码
+     */
+    private String systemCode;
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (handler instanceof HandlerMethod) {
             HandlerMethod method = (HandlerMethod) handler;
             if (!method.hasMethodAnnotation(AccessNonCheck.class)) {
-                boolean canAccess = SecurityAccess.checkCanAccess(UserContext.getCurrentUser(), request.getRequestURI(), ignoreNoneConfigUri);
+                boolean canAccess = SecurityAccess.checkCanAccess(UserContext.getCurrentUser(), systemCode, request.getRequestURI(), ignoreNoneConfigUri);
                 if (!canAccess) {
                     throw new AccessNotAllowException();
                 }
@@ -44,5 +49,13 @@ public class AccessInterceptor extends HandlerInterceptorAdapter {
 
     public void setIgnoreNoneConfigUri(boolean ignoreNoneConfigUri) {
         this.ignoreNoneConfigUri = ignoreNoneConfigUri;
+    }
+
+    public String getSystemCode() {
+        return systemCode;
+    }
+
+    public void setSystemCode(String systemCode) {
+        this.systemCode = systemCode;
     }
 }

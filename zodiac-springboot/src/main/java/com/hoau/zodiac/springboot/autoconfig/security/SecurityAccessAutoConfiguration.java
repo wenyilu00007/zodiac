@@ -3,6 +3,7 @@ package com.hoau.zodiac.springboot.autoconfig.security;
 import com.hoau.zodiac.core.security.SecurityAccess;
 import com.hoau.zodiac.springboot.autoconfig.message.LocaleMessageProperties;
 import com.hoau.zodiac.web.interceptor.AccessInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -20,8 +21,12 @@ import org.springframework.context.annotation.Configuration;
 */
 @Configuration
 @ConditionalOnWebApplication
+@EnableConfigurationProperties(SecurityAccessProperties.class)
 @ConditionalOnProperty(prefix = "zodiac.security.accessControl", name = "enable")
 public class SecurityAccessAutoConfiguration {
+
+    @Autowired
+    private SecurityAccessProperties securityAccessProperties;
 
     /**
      * 创建访问控制实体
@@ -44,7 +49,10 @@ public class SecurityAccessAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public AccessInterceptor accessInterceptor() {
-        return new AccessInterceptor();
+        AccessInterceptor interceptor = new AccessInterceptor();
+        interceptor.setIgnoreNoneConfigUri(securityAccessProperties.isIgnoreNoneConfigUri());
+        interceptor.setSystemCode(securityAccessProperties.getSystemCode());
+        return interceptor;
     }
 
 }
