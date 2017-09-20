@@ -35,7 +35,7 @@ public class LocaleMessageProperties {
     /**
      * Cookie中存储语言的键
      */
-    private String cookieLanguageNameKey;
+    private String cookieLanguageNameKey = "language";
 
     public boolean isEnable() {
         return enable;
