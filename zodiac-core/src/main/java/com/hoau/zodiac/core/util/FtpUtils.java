@@ -73,38 +73,33 @@ public class FtpUtils {
      * @return <b>true</b>：连接成功 <br/>
      * <b>false</b>：连接失败
      */
-    public boolean connectToTheServer(String remotePath) {
+    public boolean connectToTheServer(String remotePath) throws IOException {
         // 定义返回值
         boolean result = false;
-        try {
-            // 连接至服务器，端口默认为21时，可直接通过URL连接
-            ftpClient.connect(this.host, this.port);
-            // 登录服务器
-            ftpClient.login(this.username, this.password);
-            // 判断返回码是否合法
-            if (!FTPReply.isPositiveCompletion(ftpClient.getReplyCode())) {
-                // 不合法时断开连接
-                ftpClient.disconnect();
-                // 结束程序
-                return result;
-            }
-            //设置文件传输模式
-            //被动模式
-            //ftpClient.enterLocalPassiveMode();
-            //创建目录
-            ftpClient.makeDirectory(remotePath);
-            // 设置文件操作目录
-            ftpClient.changeWorkingDirectory(remotePath);
-            // 设置文件类型，二进制
-            result = ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
-            // 设置缓冲区大小
-            ftpClient.setBufferSize(3072);
-            // 设置字符编码
-            ftpClient.setControlEncoding("UTF-8");
-        } catch (IOException e) {
-            logger.error("FtpUtil 连接FTP服务器异常", e);
-            throw new RuntimeException("FtpUtil 连接FTP服务器异常", e);
+        // 设置字符编码
+        ftpClient.setControlEncoding("GBK");
+        // 连接至服务器，端口默认为21时，可直接通过URL连接
+        ftpClient.connect(this.host, this.port);
+        // 登录服务器
+        ftpClient.login(this.username, this.password);
+        // 判断返回码是否合法
+        if (!FTPReply.isPositiveCompletion(ftpClient.getReplyCode())) {
+            // 不合法时断开连接
+            ftpClient.disconnect();
+            // 结束程序
+            return result;
         }
+        //设置文件传输模式
+        //被动模式
+        //ftpClient.enterLocalPassiveMode();
+        //创建目录
+        ftpClient.makeDirectory(remotePath);
+        // 设置文件操作目录
+        ftpClient.changeWorkingDirectory(remotePath);
+        // 设置文件类型，二进制
+        result = ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
+        // 设置缓冲区大小
+        ftpClient.setBufferSize(3072);
         return result;
     }
 
@@ -117,7 +112,7 @@ public class FtpUtils {
      * @return <b>true</b>：上传成功 <br/>
      * <b>false</b>：上传失败
      */
-    public boolean uploadFile(String remotePath, String fileName, InputStream is) {
+    public boolean uploadFile(String remotePath, String fileName, InputStream is) throws IOException {
         boolean result = false;
         try {
             // 连接至服务器
@@ -129,18 +124,11 @@ public class FtpUtils {
             }
             // 关闭输入流
             is.close();
-        } catch (IOException e) {
-            logger.error("FtpUtil 上传文件至FTP异常 " + e.getMessage());
         } finally {
             // 判断输入流是否存在
             if (null != is) {
-                try {
-                    // 关闭输入流
-                    is.close();
-                } catch (IOException e) {
-                    logger.error("FtpUtil 上传文件至FTP 关闭连接时异常" + e.getMessage());
-                    throw new RuntimeException("FtpUtil 上传文件至FTP 关闭连接时异常", e);
-                }
+                // 关闭输入流
+                is.close();
             }
             // 登出服务器并断开连接
             logout();
@@ -156,16 +144,11 @@ public class FtpUtils {
      * @param fileName   下载文件存储名称
      * @return <b>InputStream</b>：文件输入流
      */
-    public byte[] retrieveFile(String remotePath, String fileName) {
-        try {
-            // 判断服务器是否连接成功
-            if (connectToTheServer(remotePath)) {
-                // 获取文件输入流
-                return StreamUtils.copyToByteArray(ftpClient.retrieveFileStream(fileName));
-            }
-        } catch (IOException e) {
-            logger.error("FtpUtil 从FTP下载文件到本地异常" + e.getMessage());
-            throw new RuntimeException("FtpUtil 从FTP下载文件到本地异常", e);
+    public byte[] retrieveFile(String remotePath, String fileName) throws IOException {
+        // 判断服务器是否连接成功
+        if (connectToTheServer(remotePath)) {
+            // 获取文件输入流
+            return StreamUtils.copyToByteArray(ftpClient.retrieveFileStream(fileName));
         }
         return null;
     }
@@ -178,7 +161,7 @@ public class FtpUtils {
      * @param localPath  下载后保存到本地的路径
      * @return
      */
-    public boolean downloadFile(String remotePath, String fileName, String localPath) {
+    public boolean downloadFile(String remotePath, String fileName, String localPath) throws IOException {
         // 初始表示下载失败
         boolean success = false;
         //表示是否连接成功
@@ -204,8 +187,6 @@ public class FtpUtils {
                     }
                 }
             }
-        } catch (IOException e) {
-            logger.error("FtpUtil 从FTP服务器下载文件异常", e);
         } finally {
             // 登出服务器并断开连接
             logout();
@@ -222,16 +203,13 @@ public class FtpUtils {
      * @return <b>true</b>：删除成功 <br/>
      * <b>false</b>：删除失败
      */
-    public boolean deleteFile(String remotePath, String fileName) {
+    public boolean deleteFile(String remotePath, String fileName) throws IOException {
         boolean result = false;
         // 判断服务器是否连接成功
         if (connectToTheServer(remotePath)) {
             try {
                 // 删除文件
                 result = ftpClient.deleteFile(fileName);
-            } catch (IOException e) {
-                logger.error("FtpUtil 删除FTP服务器上的 文件异常" + e.getMessage());
-                throw new RuntimeException("FtpUtil 删除FTP服务器上的 文件异常", e);
             } finally {
                 // 登出服务器并断开连接
                 logout();
@@ -248,7 +226,7 @@ public class FtpUtils {
      * @return <b>true</b>：文件存在 <br/>
      * <b>false</b>：文件不存在
      */
-    public boolean checkFile(String remotePath, String fileName) {
+    public boolean checkFile(String remotePath, String fileName) throws IOException {
         boolean result = false;
         try {
             // 判断服务器是否连接成功
@@ -262,9 +240,6 @@ public class FtpUtils {
                     }
                 }
             }
-        } catch (IOException e) {
-            logger.error("FtpUtil 检查FTP文件是否存在异常" + e.getMessage());
-            throw new RuntimeException("FtpUtil 检查FTP文件是否存在异常", e);
         } finally {
             // 登出服务器并断开连接
             logout();
@@ -278,25 +253,17 @@ public class FtpUtils {
      * @return <b>true</b>：操作成功 <br/>
      * <b>false</b>：操作失败
      */
-    public boolean logout() {
+    public boolean logout() throws IOException {
         boolean result = false;
         if (null != ftpClient) {
             try {
                 // 退出服务器
                 result = ftpClient.logout();
-            } catch (IOException e) {
-                logger.error("FtpUtil 退出FTP服务器异常" + e.getMessage());
-                throw new RuntimeException("FtpUtil 退出FTP服务器异常", e);
             } finally {
                 // 判断连接是否存在
                 if (ftpClient.isConnected()) {
-                    try {
-                        // 断开连接
-                        ftpClient.disconnect();
-                    } catch (IOException e) {
-                        logger.error("FtpUtil 关闭FTP服务器异常" + e.getMessage());
-                        throw new RuntimeException("FtpUtil 关闭FTP服务器异常", e);
-                    }
+                    // 断开连接
+                    ftpClient.disconnect();
                 }
             }
         }
@@ -308,25 +275,20 @@ public class FtpUtils {
      *
      * @param filepath txt文件目录即文件名
      */
-    public ArrayList<String> readTxt(String filepath) {
+    public ArrayList<String> readTxt(String filepath) throws IOException {
         ArrayList<String> readList = new ArrayList<String>();
-        try {
-            String temp = null;
-            File f = new File(filepath);
-            // 指定读取编码用于读取中文
-            InputStreamReader read = new InputStreamReader(new FileInputStream(f), "UTF-8");
-            BufferedReader reader = new BufferedReader(read);
-            do {
-                temp = reader.readLine();
-                if (temp != null) {
-                    readList.add(temp);
-                }
-            } while (temp != null);
-            read.close();
-        } catch (Exception e) {
-            logger.error("读取本地txt异常" + e.getMessage());
-            throw new RuntimeException("读取本地txt异常", e);
-        }
+        String temp = null;
+        File f = new File(filepath);
+        // 指定读取编码用于读取中文
+        InputStreamReader read = new InputStreamReader(new FileInputStream(f), "UTF-8");
+        BufferedReader reader = new BufferedReader(read);
+        do {
+            temp = reader.readLine();
+            if (temp != null) {
+                readList.add(temp);
+            }
+        } while (temp != null);
+        read.close();
         return readList;
     }
 
