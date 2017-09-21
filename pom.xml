@@ -41,6 +41,7 @@
         <logback.version>1.2.3</logback.version>
         <janino.version>3.0.6</janino.version>
         <kafka.clients.version>0.11.0.0</kafka.clients.version>
+        <common.ftp.version>2.0</common.ftp.version>
     </properties>
 
     <dependencyManagement>
@@ -239,6 +240,12 @@
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-starter-sleuth</artifactId>
                 <version>${spring.cloud.sleuth.version}</version>
+            </dependency>
+            <!-- FTP -->
+            <dependency>
+                <groupId>commons-net</groupId>
+                <artifactId>commons-net</artifactId>
+                <version>${common.ftp.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
