@@ -511,10 +511,6 @@ public class DateUtils {
     	return dateTime[0] + " " + dateTime[1].substring(0, 8);
 	}
 
-	public static void main(String[] args) throws ParseException {
-		System.out.printf(getZonedDateTime("2017-09-06T16:20:29+0900"));
-	}
-
 	/**
 	 * 从yyyy-MM-dd'T'HH:mm:ssZ格式的时间中获取时区信息
 	 * @param dateStr	yyyy-MM-dd'T'HH:mm:ssZ 	时间格式字符串
@@ -532,6 +528,56 @@ public class DateUtils {
 			throw new ParseException("error ZoneValue!", zoneValue);
 		}
 		return Integer.parseInt(zoneFlag + zoneValue);
+	}
+
+	/**
+	 * 将通过yyyy-MM-dd'T'HH:mm:ss解析出来的yyyy-MM-dd HH:mm:ss和zoneValue转换回去
+	 * @param dateStr		yyyy-MM-dd HH:mm:ss格式日期字符串
+	 * @param zoneValue		-12~12时区
+	 * @return
+	 * @author 陈宇霖
+	 * @date 2017年09月26日23:17:17
+	 */
+	public static String revertGetTime(String dateStr, Integer zoneValue) {
+		return revertGetZonedDateTime(dateStr) + revertGetTimeZone(zoneValue);
+	}
+
+	/**
+	 * 反向将yyyy-MM-dd HH:mm:ss格式的时间字符串转换成yyyy-MM-dd'T'HH:mm:ss格式
+	 * @param dateStr
+	 * @return
+	 * @author 陈宇霖
+	 * @date 2017年09月26日23:14:30
+	 */
+	public static String revertGetZonedDateTime(String dateStr) {
+		String[] dateTime = dateStr.split(" ");
+		return dateTime[0] + "T" + dateTime[1];
+	}
+
+	/**
+	 * 根据时区的值返回格式化的时区字符串
+	 * @param zoneValue
+	 * @return
+	 * @author 陈宇霖
+	 * @date 2017年09月26日22:58:21
+	 */
+	public static String revertGetTimeZone(Integer zoneValue) {
+    	if (zoneValue == null || zoneValue > 12 || zoneValue < -12) {
+    		return String.valueOf(zoneValue);
+		}
+		if (zoneValue >= 0){
+    		if (zoneValue >= 10) {
+    			return "+" + String.valueOf(zoneValue) + "00";
+			} else {
+				return "+0" + String.valueOf(zoneValue) + "00";
+			}
+		} else {
+			if (zoneValue <= -10) {
+				return String.valueOf(zoneValue) + "00";
+			} else {
+				return "-0" + String.valueOf(-1 * zoneValue) + "00";
+			}
+		}
 	}
 
 	/**
