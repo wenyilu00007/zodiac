@@ -5,7 +5,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
-import javax.persistence.Transient;
 
 /**
 * @Title: BasicEntity
@@ -23,7 +22,13 @@ public class BasicEntity implements Serializable {
      */
     @Id
     @Column(name = "id")
-    private String id;
+    private Long id;
+
+    /**
+     * 是否有效 0：无效，1有效
+     */
+    @Column(name = "is_active")
+    private Integer active;
 
     /**
      * 创建时间
@@ -49,12 +54,20 @@ public class BasicEntity implements Serializable {
     @Column(name = "modify_user_code")
     private String modifyUserCode;
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
+    }
+
+    public Integer getActive() {
+        return active;
+    }
+
+    public void setActive(Integer active) {
+        this.active = active;
     }
 
     public Date getCreateTime() {
