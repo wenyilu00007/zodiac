@@ -18,6 +18,11 @@ public class Response<T> implements Serializable {
     public static final String ERROR_REDIRECT = "302";
 
     /**
+     * 无权访问指定资源
+     */
+    public static final String ERROR_CODE_NOT_RIGHT_TO_ACCESS = "403";
+
+    /**
      * 校验类异常编码
      */
     public static final String ERROR_CODE_VALIDATE = "10000";
@@ -121,5 +126,22 @@ public class Response<T> implements Serializable {
 
     public void setResult(T result) {
         this.result = result;
+    }
+
+    /**
+     * 构建无权访问的返回实体
+     * @param errorMessage
+     * @return
+     * @author 陈宇霖
+     * @date 2017年09月27日11:07:30
+     */
+    public static Response buildNoRightToAccessResponse(String errorMessage) {
+        Response result = new Response();
+        result.setSuccess(false);
+        result.setHasBusinessException(true);
+        result.setErrorCode(Response.ERROR_CODE_NOT_RIGHT_TO_ACCESS);
+        result.setErrorMsg(errorMessage);
+        result.setMessage(errorMessage);
+        return result;
     }
 }

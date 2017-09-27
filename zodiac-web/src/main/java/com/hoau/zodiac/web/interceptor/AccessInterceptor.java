@@ -1,8 +1,11 @@
 package com.hoau.zodiac.web.interceptor;
 
-import com.hoau.zodiac.core.exception.AccessNotAllowException;
+import com.alibaba.fastjson.JSON;
+import com.hoau.zodiac.core.message.LocaleMessageSource;
 import com.hoau.zodiac.core.security.SecurityAccess;
 import com.hoau.zodiac.web.context.UserContext;
+import com.hoau.zodiac.web.response.Response;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -29,6 +32,11 @@ public class AccessInterceptor extends HandlerInterceptorAdapter {
      */
     private String systemCode;
 
+    /**
+     * 异常信息进行国际化
+     */
+    private LocaleMessageSource localeMessageSource;
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (handler instanceof HandlerMethod) {
@@ -36,7 +44,13 @@ public class AccessInterceptor extends HandlerInterceptorAdapter {
             if (!method.hasMethodAnnotation(AccessNonCheck.class)) {
                 boolean canAccess = SecurityAccess.checkCanAccess(UserContext.getCurrentUser(), systemCode, request.getRequestURI(), ignoreNoneConfigUri);
                 if (!canAccess) {
-                    throw new AccessNotAllowException();
+                    String errorMessage = "User No Right To Access The Resource";
+                    if (localeMessageSource != null) {
+                        errorMessage = localeMessageSource.getMessage("error.user.no.right.to.access");
+                    }
+                    response.setStatus(HttpStatus.OK.value());
+                    response.getWriter().write(JSON.toJSONString(Response.buildNoRightToAccessResponse(errorMessage)));
+                    return false;
                 }
             }
         }
@@ -57,5 +71,13 @@ public class AccessInterceptor extends HandlerInterceptorAdapter {
 
     public void setSystemCode(String systemCode) {
         this.systemCode = systemCode;
+    }
+
+    public LocaleMessageSource getLocaleMessageSource() {
+        return localeMessageSource;
+    }
+
+    public void setLocaleMessageSource(LocaleMessageSource localeMessageSource) {
+        this.localeMessageSource = localeMessageSource;
     }
 }

@@ -37,7 +37,7 @@ public class ZodiacAuthenticationRedirectStrategy implements AuthenticationRedir
         //只有配置了重定向地址的才进行处理
         response.setContentType(ContentType.APPLICATION_JSON.toString());
         Response redirectResponse = new Response();
-        redirectResponse.setErrorCode("302");
+        redirectResponse.setErrorCode(Response.ERROR_REDIRECT);
         if (CommonUtils.isBlank(alwaysRedirectServerUrl)) {
 //            response.sendRedirect(potentialRedirectUrl);
             redirectResponse.setResult(potentialRedirectUrl);

@@ -1,13 +1,16 @@
 package com.hoau.zodiac.springboot.autoconfig.security;
 
+import com.hoau.zodiac.core.message.LocaleMessageSource;
 import com.hoau.zodiac.core.security.SecurityAccess;
-import com.hoau.zodiac.springboot.autoconfig.message.LocaleMessageProperties;
+import com.hoau.zodiac.springboot.autoconfig.message.LocaleMessageAutoConfiguration;
 import com.hoau.zodiac.web.interceptor.AccessInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,12 +24,16 @@ import org.springframework.context.annotation.Configuration;
 */
 @Configuration
 @ConditionalOnWebApplication
+@AutoConfigureAfter(LocaleMessageAutoConfiguration.class)
 @EnableConfigurationProperties(SecurityAccessProperties.class)
 @ConditionalOnProperty(prefix = "zodiac.security.accessControl", name = "enable")
 public class SecurityAccessAutoConfiguration {
 
     @Autowired
     private SecurityAccessProperties securityAccessProperties;
+
+    @Autowired
+    private MessageSource messageSource;
 
     /**
      * 创建访问控制实体
@@ -48,10 +55,11 @@ public class SecurityAccessAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    public AccessInterceptor accessInterceptor() {
+    public AccessInterceptor accessInterceptor(LocaleMessageSource localeMessageSource) {
         AccessInterceptor interceptor = new AccessInterceptor();
         interceptor.setIgnoreNoneConfigUri(securityAccessProperties.isIgnoreNoneConfigUri());
         interceptor.setSystemCode(securityAccessProperties.getSystemCode());
+        interceptor.setLocaleMessageSource(localeMessageSource);
         return interceptor;
     }
 

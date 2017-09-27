@@ -153,10 +153,7 @@ public class BasicController {
         response.setSuccess(false);
 
         if (exception instanceof AccessNotAllowException) { //无权访问
-            response.setHasBusinessException(true);
-            response.setMessage(localeMessageSource.getMessage(((AccessNotAllowException)exception).getErrorCode()));
-            response.setErrorCode(Response.ERROR_CODE_VALIDATE);
-            response.setErrorMsg(localeMessageSource.getMessage(((AccessNotAllowException)exception).getErrorCode()));
+            response = Response.buildNoRightToAccessResponse(localeMessageSource.getMessage(((AccessNotAllowException)exception).getErrorCode()));
         } else if (exception instanceof BusinessException) {    //业务异常
             response.setHasBusinessException(true);
             response.setMessage(localeMessageSource.getMessage(((BusinessException)exception).getErrorCode(), ((BusinessException)exception).getErrorArguments()));
