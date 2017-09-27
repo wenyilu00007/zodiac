@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @description 主键生成服务
  * @date 2017/8/9
  */
-@FeignClient(value = "virgo")
+@FeignClient(value = "virgo-id")
 public interface IdGenerator {
 
-    @RequestMapping(value = "/virgo/generator/id",method = RequestMethod.GET)
+    @RequestMapping(value = "/generator/id",method = RequestMethod.GET)
     long nextId();
 }
