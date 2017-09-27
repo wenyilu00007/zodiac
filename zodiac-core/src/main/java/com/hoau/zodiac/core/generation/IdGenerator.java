@@ -16,5 +16,5 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public interface IdGenerator {
 
     @RequestMapping(value = "/generator/id",method = RequestMethod.GET)
-    long nextId();
+    String nextId();
 }

@@ -22,7 +22,7 @@ public class BasicEntity implements Serializable {
      */
     @Id
     @Column(name = "id")
-    private Long id;
+    private String id;
 
     /**
      * 是否有效 0：无效，1有效
@@ -54,11 +54,11 @@ public class BasicEntity implements Serializable {
     @Column(name = "modify_user_code")
     private String modifyUserCode;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
