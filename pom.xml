@@ -42,6 +42,8 @@
         <janino.version>3.0.6</janino.version>
         <kafka.clients.version>0.11.0.0</kafka.clients.version>
         <common.ftp.version>2.0</common.ftp.version>
+        <spring.cloud.stream.rabbit.version>1.2.1.RELEASE</spring.cloud.stream.rabbit.version>
+        <spring.cloud.sleuth.stream.version>1.2.2.RELEASE</spring.cloud.sleuth.stream.version>
     </properties>
 
     <dependencyManagement>
@@ -235,17 +237,19 @@
                 <artifactId>kafka-clients</artifactId>
                 <version>${kafka.clients.version}</version>
             </dependency>
-            <!--链式调用追踪-->
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-starter-sleuth</artifactId>
-                <version>${spring.cloud.sleuth.version}</version>
-            </dependency>
             <!-- FTP -->
             <dependency>
                 <groupId>commons-net</groupId>
                 <artifactId>commons-net</artifactId>
                 <version>${common.ftp.version}</version>
+            </dependency>
+            <!--引入 springCloud 版本-->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
