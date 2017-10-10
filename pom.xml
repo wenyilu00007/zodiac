@@ -44,6 +44,7 @@
         <common.ftp.version>2.0</common.ftp.version>
         <spring.cloud.stream.rabbit.version>1.2.1.RELEASE</spring.cloud.stream.rabbit.version>
         <spring.cloud.sleuth.stream.version>1.2.2.RELEASE</spring.cloud.sleuth.stream.version>
+        <okhttp.version>9.4.0</okhttp.version>
     </properties>
 
     <dependencyManagement>
@@ -250,6 +251,12 @@
                 <version>${spring-cloud.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <!--使用 okhttp 替代 httpclient-->
+            <dependency>
+                <groupId>io.github.openfeign</groupId>
+                <artifactId>feign-okhttp</artifactId>
+                <version>${okhttp.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
