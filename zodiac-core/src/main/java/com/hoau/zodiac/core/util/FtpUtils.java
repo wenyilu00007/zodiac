@@ -194,6 +194,22 @@ public class FtpUtils {
         return success;
     }
 
+    /**
+     * 获取ftp目录下的所有文件列表
+     *
+     * @param remotePath FTP服务器上文件目录
+     * @return
+     * @author DINGYONG
+     * @createDate 2017/10/9
+     */
+    public FTPFile[] getFileList(String remotePath) throws IOException {
+        // 连接至服务器
+        if (connectToTheServer(remotePath)) {
+            // 列出该目录下所有文件
+            return ftpClient.listFiles();
+        }
+        return null;
+    }
 
     /**
      * 删除FTP服务器文件
