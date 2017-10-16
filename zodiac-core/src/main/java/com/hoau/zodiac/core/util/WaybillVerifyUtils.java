@@ -42,7 +42,7 @@ public class WaybillVerifyUtils {
         }
         String serverVerifyFlag = verifyCodeGenerate(flowNum);
         //校验位为第15位
-        String verifyFlag = waybillNo.substring(16, 17);
+        String verifyFlag = waybillNo.substring(14, 15);
         if (!serverVerifyFlag.equals(verifyFlag)) {
             return false;
         }
@@ -66,5 +66,11 @@ public class WaybillVerifyUtils {
         }
         verifyCode = "" + (sum % weightAvg + verifyNum) % 10 ;
         return verifyCode;
+    }
+
+
+    public static void main(String[] args) {
+        String trackNumber = "2012345678901210000000000";
+        System.out.println(verifyWaybill(trackNumber));
     }
 }
