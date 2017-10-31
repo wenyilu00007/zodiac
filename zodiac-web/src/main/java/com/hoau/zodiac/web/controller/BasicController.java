@@ -160,6 +160,7 @@ public class BasicController {
             response.setErrorCode(Response.ERROR_CODE_BUSINESS_EXCEPTION);
             response.setErrorMsg(localeMessageSource.getMessage(((BusinessException)exception).getErrorCode(), ((BusinessException)exception).getErrorArguments()));
         } else if (exception instanceof MethodArgumentNotValidException) { //参数校验失败异常
+            response.setHasBusinessException(true);
             BindingResult bindingResult = ((MethodArgumentNotValidException)exception).getBindingResult();
             StringBuffer errorMsg = new StringBuffer();
             bindingResult.getFieldErrors().forEach(fieldError -> {
