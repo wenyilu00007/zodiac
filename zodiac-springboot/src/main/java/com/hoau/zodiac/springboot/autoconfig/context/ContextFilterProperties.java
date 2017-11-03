@@ -36,12 +36,26 @@ public class ContextFilterProperties {
     private String gatewayLogoutRedirectUrl;
 
     /**
+     * 不启用网关情况下，登出后重定向地址
+     */
+    private String withoutCasOfflineRedirectUrl;
+
+    /**
      * 不进行过滤的地址列表
      */
     private List<String> excludeUrlPatterns;
 
+    /**
+     * 基于cookie登陆保持的配置
+     */
+    private CookieBasedProperties cookieBasedProperties;
+
     public boolean isEnable() {
         return enable;
+    }
+
+    public void setEnable(boolean enable) {
+        this.enable = enable;
     }
 
     public boolean isGatewayEnable() {
@@ -68,8 +82,12 @@ public class ContextFilterProperties {
         this.gatewayLogoutRedirectUrl = gatewayLogoutRedirectUrl;
     }
 
-    public void setEnable(boolean enable) {
-        this.enable = enable;
+    public String getWithoutCasOfflineRedirectUrl() {
+        return withoutCasOfflineRedirectUrl;
+    }
+
+    public void setWithoutCasOfflineRedirectUrl(String withoutCasOfflineRedirectUrl) {
+        this.withoutCasOfflineRedirectUrl = withoutCasOfflineRedirectUrl;
     }
 
     public List<String> getExcludeUrlPatterns() {
@@ -78,5 +96,13 @@ public class ContextFilterProperties {
 
     public void setExcludeUrlPatterns(List<String> excludeUrlPatterns) {
         this.excludeUrlPatterns = excludeUrlPatterns;
+    }
+
+    public CookieBasedProperties getCookieBasedProperties() {
+        return cookieBasedProperties;
+    }
+
+    public void setCookieBasedProperties(CookieBasedProperties cookieBasedProperties) {
+        this.cookieBasedProperties = cookieBasedProperties;
     }
 }

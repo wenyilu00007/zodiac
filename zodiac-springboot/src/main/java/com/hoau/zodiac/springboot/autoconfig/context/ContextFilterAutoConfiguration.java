@@ -1,6 +1,7 @@
 package com.hoau.zodiac.springboot.autoconfig.context;
 
 import com.hoau.zodiac.web.filter.ContextFilter;
+import com.hoau.zodiac.web.filter.CookieBasedContextFilter;
 import com.hoau.zodiac.web.filter.GatewayContextFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -56,5 +57,17 @@ public class ContextFilterAutoConfiguration {
         gatewayContextFilter.setGatewayLogoutServerUrl(contextFilterProperties.getGatewayLogoutServerUrl());
         gatewayContextFilter.setGatewayLogoutRedirectUrl(contextFilterProperties.getGatewayLogoutRedirectUrl());
         return gatewayContextFilter;
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnProperty(prefix = "zodiac.web.context.cookieBasedProperties", name = "enable")
+    public CookieBasedContextFilter cookieBasedContextFilter() {
+        CookieBasedContextFilter cookieBasedContextFilter = new CookieBasedContextFilter();
+        cookieBasedContextFilter.setExcludeUrlPatterns(contextFilterProperties.getExcludeUrlPatterns());
+        cookieBasedContextFilter.setCookieName(contextFilterProperties.getCookieBasedProperties().getCookieName());
+        cookieBasedContextFilter.setApplicationId(contextFilterProperties.getCookieBasedProperties().getApplicationId());
+        cookieBasedContextFilter.setExpireTime(contextFilterProperties.getCookieBasedProperties().getExpireTime());
+        return cookieBasedContextFilter;
     }
 }
