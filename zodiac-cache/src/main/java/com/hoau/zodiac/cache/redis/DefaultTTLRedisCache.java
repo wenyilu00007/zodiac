@@ -93,7 +93,9 @@ public abstract class DefaultTTLRedisCache<V> implements ICache<String, V>, Init
      */
     public V get(String key) {
         if(StringUtils.isEmpty(key)) {
-            throw new RuntimeException("key does not allow for null!");
+            LOG.warn("缓存["+getUUID()+"]，key为空串，返回结果[null]");
+            //key存在，value为空串
+            return null;
         }
         V value = null;
         try {
