@@ -20,6 +20,26 @@ public class ApplicationConstants {
     public static final int INACTIVE = 0;
 
     /**
+     * 是
+     */
+    public static final int YES = 1;
+
+    /**
+     * 否
+     */
+    public static final int NO = 0;
+
+    /**
+     * 启用
+     */
+    public static final int ENABLE = 1;
+
+    /**
+     * 停用
+     */
+    public static final int DISABLE = 0;
+
+    /**
      * 系统自动操作数据的操作人
      */
     public static final String SYSTEM_OPERATOR = "SYSTEM";
