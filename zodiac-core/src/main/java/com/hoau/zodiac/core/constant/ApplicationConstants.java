@@ -41,11 +41,11 @@ public class ApplicationConstants {
     /**
      * 带电
      */
-    public static final int CHARGED_YES = 0;
+    public static final int CHARGED_YES = 1;
     /**
      * 不带电
      */
-    public static final int CHARGED_NO = 1;
+    public static final int CHARGED_NO = 0;
     /**
      * DDU
      */
