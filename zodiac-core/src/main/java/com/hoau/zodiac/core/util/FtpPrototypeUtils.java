@@ -27,11 +27,6 @@ public class FtpPrototypeUtils {
     protected static final Logger logger = LoggerFactory.getLogger(FtpUtils.class);
 
     /**
-     * 连接ftp进行操作的客户端
-     */
-    private FTPClient ftpClient;
-
-    /**
      * 服务器地址
      */
     private String host;
@@ -61,9 +56,6 @@ public class FtpPrototypeUtils {
      * @date 2017年09月21日10:53:35
      */
     public FtpPrototypeUtils(String host, int port, String username, String password) {
-        if (null == ftpClient) {
-            ftpClient = new FTPClient();
-        }
         this.host = host;
         this.port = port;
         this.username = username;
@@ -77,7 +69,10 @@ public class FtpPrototypeUtils {
      * @return <b>true</b>：连接成功 <br/>
      * <b>false</b>：连接失败
      */
-    public boolean connectToTheServer(String remotePath) throws IOException {
+    public boolean connectToTheServer(FTPClient ftpClient, String remotePath) throws IOException {
+        if (null == ftpClient) {
+            ftpClient = new FTPClient();
+        }
         // 定义返回值
         boolean result = false;
         // 设置字符编码
@@ -118,9 +113,10 @@ public class FtpPrototypeUtils {
      */
     public boolean uploadFile(String remotePath, String fileName, InputStream is) throws IOException {
         boolean result = false;
+        FTPClient ftpClient = new FTPClient();
         try {
             // 连接至服务器
-            result = connectToTheServer(remotePath);
+            result = connectToTheServer(ftpClient, remotePath);
             // 判断服务器是否连接成功
             if (result) {
                 // 上传文件
@@ -135,7 +131,7 @@ public class FtpPrototypeUtils {
                 is.close();
             }
             // 登出服务器并断开连接
-            logout();
+            logout(ftpClient);
         }
         return result;
     }
@@ -150,7 +146,8 @@ public class FtpPrototypeUtils {
      */
     public byte[] retrieveFile(String remotePath, String fileName) throws IOException {
         // 判断服务器是否连接成功
-        if (connectToTheServer(remotePath)) {
+        FTPClient ftpClient = new FTPClient();
+        if (connectToTheServer(ftpClient, remotePath)) {
             // 获取文件输入流
             return StreamUtils.copyToByteArray(ftpClient.retrieveFileStream(fileName));
         }
@@ -173,9 +170,10 @@ public class FtpPrototypeUtils {
         if (!file.exists()) {
             file.mkdirs();
         }
+        FTPClient ftpClient = new FTPClient();
         try {
             // 连接至服务器
-            if (connectToTheServer(remotePath)) {
+            if (connectToTheServer(ftpClient, remotePath)) {
                 // 列出该目录下所有文件
                 FTPFile[] fs = ftpClient.listFiles();
                 // 遍历所有文件，找到指定的文件
@@ -193,7 +191,7 @@ public class FtpPrototypeUtils {
             }
         } finally {
             // 登出服务器并断开连接
-            logout();
+            logout(ftpClient);
         }
         return success;
     }
@@ -208,7 +206,8 @@ public class FtpPrototypeUtils {
      */
     public FTPFile[] getFileList(String remotePath) throws IOException {
         // 连接至服务器
-        if (connectToTheServer(remotePath)) {
+        FTPClient ftpClient = new FTPClient();
+        if (connectToTheServer(ftpClient, remotePath)) {
             // 列出该目录下所有文件
             return ftpClient.listFiles();
         }
@@ -217,8 +216,9 @@ public class FtpPrototypeUtils {
 
     public boolean moveFileList(String targetFilePath,String fileName, InputStream is) throws IOException {
         boolean result = false;
+        FTPClient ftpClient = new FTPClient();
         if (!ftpClient.isConnected()){
-            connectToTheServer(targetFilePath);
+            connectToTheServer(ftpClient, targetFilePath);
         }
         try {
             ftpClient.changeWorkingDirectory(targetFilePath);
@@ -245,13 +245,14 @@ public class FtpPrototypeUtils {
     public boolean deleteFile(String remotePath, String fileName) throws IOException {
         boolean result = false;
         // 判断服务器是否连接成功
-        if (connectToTheServer(remotePath)) {
+        FTPClient ftpClient = new FTPClient();
+        if (connectToTheServer(ftpClient, remotePath)) {
             try {
                 // 删除文件
                 result = ftpClient.deleteFile(fileName);
             } finally {
                 // 登出服务器并断开连接
-                logout();
+                logout(ftpClient);
             }
         }
         return result;
@@ -267,9 +268,10 @@ public class FtpPrototypeUtils {
      */
     public boolean checkFile(String remotePath, String fileName) throws IOException {
         boolean result = false;
+        FTPClient ftpClient = new FTPClient();
         try {
             // 判断服务器是否连接成功
-            if (connectToTheServer(remotePath)) {
+            if (connectToTheServer(ftpClient, remotePath)) {
                 // 获取文件操作目录下所有文件名称
                 String[] remoteNames = ftpClient.listNames();
                 // 循环比对文件名称，判断是否含有当前要下载的文件名
@@ -281,7 +283,7 @@ public class FtpPrototypeUtils {
             }
         } finally {
             // 登出服务器并断开连接
-            logout();
+            logout(ftpClient);
         }
         return result;
     }
@@ -292,7 +294,7 @@ public class FtpPrototypeUtils {
      * @return <b>true</b>：操作成功 <br/>
      * <b>false</b>：操作失败
      */
-    public boolean logout() throws IOException {
+    public boolean logout(FTPClient ftpClient) throws IOException {
         boolean result = false;
         if (null != ftpClient) {
             try {
