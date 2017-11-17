@@ -39,7 +39,9 @@ public class FastJsonMessageConverterAutoConfiguration {
     @Bean
     public FastJsonHttpMessageConverter4 fastJsonHttpMethodMessageConverter() {
         FastJsonHttpMessageConverter4 fastJsonHttpMessageConverter4 = new FastJsonHttpMessageConverter4();
-        fastJsonHttpMessageConverter4.setSupportedMediaTypes(supportedMediaTypes());
+        if (!CollectionUtils.isEmpty(supportedMediaTypes())) {
+            fastJsonHttpMessageConverter4.setSupportedMediaTypes(supportedMediaTypes());
+        }
         fastJsonHttpMessageConverter4.setFastJsonConfig(fastJsonConfig());
         return fastJsonHttpMessageConverter4;
     }
