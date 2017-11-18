@@ -209,7 +209,7 @@ public class FtpPrototypeUtils {
         FTPClient ftpClient = new FTPClient();
         if (connectToTheServer(ftpClient, remotePath)) {
             // 列出该目录下所有文件
-            return ftpClient.listFiles();
+            return ftpClient.listFiles(remotePath);
         }
         return null;
     }

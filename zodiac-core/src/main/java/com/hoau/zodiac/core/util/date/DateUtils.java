@@ -34,6 +34,8 @@ public class DateUtils {
 
     public static final String ZONED_DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
 
+    public static final String NUMBERDATEFORMAT = "YYYYMMDDHHmmss";
+
 	private DateUtils() {
 	}
 
