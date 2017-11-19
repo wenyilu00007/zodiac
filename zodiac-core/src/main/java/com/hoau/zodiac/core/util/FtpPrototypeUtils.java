@@ -69,7 +69,7 @@ public class FtpPrototypeUtils {
      * @return <b>true</b>：连接成功 <br/>
      * <b>false</b>：连接失败
      */
-    public boolean connectToTheServer(FTPClient ftpClient, String remotePath) throws IOException {
+    public boolean connectToTheServer(FTPClient ftpClient, String remotePath,boolean passiveMode) throws IOException {
         if (null == ftpClient) {
             ftpClient = new FTPClient();
         }
@@ -90,7 +90,10 @@ public class FtpPrototypeUtils {
         }
         //设置文件传输模式
         //被动模式
-        ftpClient.enterLocalPassiveMode();
+        if (passiveMode) {
+            ftpClient.enterLocalPassiveMode();
+        }
+
         //创建目录
         ftpClient.makeDirectory(remotePath);
         // 设置文件操作目录
@@ -102,13 +105,6 @@ public class FtpPrototypeUtils {
         return result;
     }
 
-    public boolean connectToTheServer(FTPClient ftpClient, String remotePath,boolean passiveMode) throws IOException {
-        if (null == ftpClient) {
-            ftpClient = new FTPClient();
-        }
-        ftpClient.enterLocalPassiveMode();
-        return this.connectToTheServer(ftpClient,remotePath);
-    }
 
     /**
      * 上传文件至FTP服务器
@@ -119,12 +115,12 @@ public class FtpPrototypeUtils {
      * @return <b>true</b>：上传成功 <br/>
      * <b>false</b>：上传失败
      */
-    public boolean uploadFile(String remotePath, String fileName, InputStream is) throws IOException {
+    public boolean uploadFile(String remotePath, String fileName, InputStream is,boolean passiveMode) throws IOException {
         boolean result = false;
         FTPClient ftpClient = new FTPClient();
         try {
             // 连接至服务器
-            result = connectToTheServer(ftpClient, remotePath);
+            result = connectToTheServer(ftpClient, remotePath ,passiveMode);
             // 判断服务器是否连接成功
             if (result) {
                 // 上传文件
@@ -152,33 +148,16 @@ public class FtpPrototypeUtils {
      * @param fileName   下载文件存储名称
      * @return <b>InputStream</b>：文件输入流
      */
-    public byte[] retrieveFile(String remotePath, String fileName) throws IOException {
+    public byte[] retrieveFile(String remotePath, String fileName ,boolean passiveMode) throws IOException {
         // 判断服务器是否连接成功
         FTPClient ftpClient = new FTPClient();
-        if (connectToTheServer(ftpClient, remotePath)) {
+        if (connectToTheServer(ftpClient, remotePath,passiveMode)) {
             // 获取文件输入流
             return StreamUtils.copyToByteArray(ftpClient.retrieveFileStream(fileName));
         }
         return null;
     }
 
-    /**
-     * 下载文件被动模式重载方法
-     * @param remotePath
-     * @param fileName
-     * @param passiveMode
-     * @return
-     * @throws IOException
-     */
-    public byte[] retrieveFile(String remotePath, String fileName,boolean passiveMode) throws IOException {
-        // 判断服务器是否连接成功
-        FTPClient ftpClient = new FTPClient();
-        if (connectToTheServer(ftpClient, remotePath, passiveMode)) {
-            // 获取文件输入流
-            return StreamUtils.copyToByteArray(ftpClient.retrieveFileStream(fileName));
-        }
-        return null;
-    }
 
     /**
      * Description: 从FTP服务器下载文件
@@ -188,7 +167,7 @@ public class FtpPrototypeUtils {
      * @param localPath  下载后保存到本地的路径
      * @return
      */
-    public boolean downloadFile(String remotePath, String fileName, String localPath) throws IOException {
+    public boolean downloadFile(String remotePath, String fileName, String localPath ,boolean passiveMode) throws IOException {
         // 初始表示下载失败
         boolean success = false;
         //表示是否连接成功
@@ -199,7 +178,7 @@ public class FtpPrototypeUtils {
         FTPClient ftpClient = new FTPClient();
         try {
             // 连接至服务器
-            if (connectToTheServer(ftpClient, remotePath)) {
+            if (connectToTheServer(ftpClient, remotePath ,passiveMode)) {
                 // 列出该目录下所有文件
                 FTPFile[] fs = ftpClient.listFiles();
                 // 遍历所有文件，找到指定的文件
@@ -230,10 +209,10 @@ public class FtpPrototypeUtils {
      * @author DINGYONG
      * @createDate 2017/10/9
      */
-    public FTPFile[] getFileList(String remotePath) throws IOException {
+    public FTPFile[] getFileList(String remotePath ,boolean passiveMode) throws IOException {
         // 连接至服务器
         FTPClient ftpClient = new FTPClient();
-        if (connectToTheServer(ftpClient, remotePath)) {
+        if (connectToTheServer(ftpClient, remotePath, passiveMode)) {
             // 列出该目录下所有文件
             return ftpClient.listFiles(remotePath);
         }
@@ -241,27 +220,19 @@ public class FtpPrototypeUtils {
     }
 
     /**
-     * 被动模式
-     * @param remotePath
+     * 移动文件
+     * @param targetFilePath
+     * @param fileName
+     * @param is
      * @param passiveMode
      * @return
      * @throws IOException
      */
-    public FTPFile[] getFileList(String remotePath,boolean passiveMode) throws IOException {
-        // 连接至服务器
-        FTPClient ftpClient = new FTPClient();
-        if (connectToTheServer(ftpClient, remotePath,passiveMode)) {
-            // 列出该目录下所有文件
-            return ftpClient.listFiles(remotePath);
-        }
-        return null;
-    }
-
-    public boolean moveFileList(String targetFilePath,String fileName, InputStream is) throws IOException {
+    public boolean moveFileList(String targetFilePath,String fileName, InputStream is,boolean passiveMode) throws IOException {
         boolean result = false;
         FTPClient ftpClient = new FTPClient();
         if (!ftpClient.isConnected()){
-            connectToTheServer(ftpClient, targetFilePath);
+            connectToTheServer(ftpClient, targetFilePath,passiveMode);
         }
         try {
             ftpClient.changeWorkingDirectory(targetFilePath);
@@ -285,11 +256,11 @@ public class FtpPrototypeUtils {
      * @return <b>true</b>：删除成功 <br/>
      * <b>false</b>：删除失败
      */
-    public boolean deleteFile(String remotePath, String fileName) throws IOException {
+    public boolean deleteFile(String remotePath, String fileName,boolean passiveMode) throws IOException {
         boolean result = false;
         // 判断服务器是否连接成功
         FTPClient ftpClient = new FTPClient();
-        if (connectToTheServer(ftpClient, remotePath)) {
+        if (connectToTheServer(ftpClient, remotePath ,passiveMode)) {
             try {
                 // 删除文件
                 result = ftpClient.deleteFile(fileName);
@@ -309,12 +280,12 @@ public class FtpPrototypeUtils {
      * @return <b>true</b>：文件存在 <br/>
      * <b>false</b>：文件不存在
      */
-    public boolean checkFile(String remotePath, String fileName) throws IOException {
+    public boolean checkFile(String remotePath, String fileName ,boolean passiveMode) throws IOException {
         boolean result = false;
         FTPClient ftpClient = new FTPClient();
         try {
             // 判断服务器是否连接成功
-            if (connectToTheServer(ftpClient, remotePath)) {
+            if (connectToTheServer(ftpClient, remotePath,passiveMode)) {
                 // 获取文件操作目录下所有文件名称
                 String[] remoteNames = ftpClient.listNames();
                 // 循环比对文件名称，判断是否含有当前要下载的文件名
