@@ -90,7 +90,7 @@ public class FtpPrototypeUtils {
         }
         //设置文件传输模式
         //被动模式
-        //ftpClient.enterLocalPassiveMode();
+        ftpClient.enterLocalPassiveMode();
         //创建目录
         ftpClient.makeDirectory(remotePath);
         // 设置文件操作目录
