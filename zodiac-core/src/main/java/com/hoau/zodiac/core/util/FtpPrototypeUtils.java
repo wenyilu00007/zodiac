@@ -163,6 +163,24 @@ public class FtpPrototypeUtils {
     }
 
     /**
+     * 下载文件被动模式重载方法
+     * @param remotePath
+     * @param fileName
+     * @param passiveMode
+     * @return
+     * @throws IOException
+     */
+    public byte[] retrieveFile(String remotePath, String fileName,boolean passiveMode) throws IOException {
+        // 判断服务器是否连接成功
+        FTPClient ftpClient = new FTPClient();
+        if (connectToTheServer(ftpClient, remotePath, passiveMode)) {
+            // 获取文件输入流
+            return StreamUtils.copyToByteArray(ftpClient.retrieveFileStream(fileName));
+        }
+        return null;
+    }
+
+    /**
      * Description: 从FTP服务器下载文件
      *
      * @param remotePath FTP服务器上的相对路径
@@ -222,6 +240,13 @@ public class FtpPrototypeUtils {
         return null;
     }
 
+    /**
+     * 被动模式
+     * @param remotePath
+     * @param passiveMode
+     * @return
+     * @throws IOException
+     */
     public FTPFile[] getFileList(String remotePath,boolean passiveMode) throws IOException {
         // 连接至服务器
         FTPClient ftpClient = new FTPClient();
