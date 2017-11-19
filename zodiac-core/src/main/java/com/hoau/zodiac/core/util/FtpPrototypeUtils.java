@@ -102,6 +102,14 @@ public class FtpPrototypeUtils {
         return result;
     }
 
+    public boolean connectToTheServer(FTPClient ftpClient, String remotePath,boolean passiveMode) throws IOException {
+        if (null == ftpClient) {
+            ftpClient = new FTPClient();
+        }
+        ftpClient.enterLocalPassiveMode();
+        return this.connectToTheServer(ftpClient,remotePath);
+    }
+
     /**
      * 上传文件至FTP服务器
      *
@@ -208,6 +216,16 @@ public class FtpPrototypeUtils {
         // 连接至服务器
         FTPClient ftpClient = new FTPClient();
         if (connectToTheServer(ftpClient, remotePath)) {
+            // 列出该目录下所有文件
+            return ftpClient.listFiles(remotePath);
+        }
+        return null;
+    }
+
+    public FTPFile[] getFileList(String remotePath,boolean passiveMode) throws IOException {
+        // 连接至服务器
+        FTPClient ftpClient = new FTPClient();
+        if (connectToTheServer(ftpClient, remotePath,passiveMode)) {
             // 列出该目录下所有文件
             return ftpClient.listFiles(remotePath);
         }
