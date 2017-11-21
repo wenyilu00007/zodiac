@@ -10,12 +10,12 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -90,6 +90,24 @@ public class RestTemplateClient implements InitializingBean {
 	}
 
 	/**
+	 * @author 刘德云
+	 * @date 2017年11月21日20:47:08
+	 * @param url
+	 * @param httpHeaders
+	 * @param typeReference
+	 * @param urlVariables
+	 * @param <T>
+	 * @return
+	 */
+	public <T> T getForObject(String url, HttpHeaders httpHeaders,TypeReference<T> typeReference,
+							  Object... urlVariables) {
+		HttpEntity<String> entity = new HttpEntity<String>(httpHeaders);
+		String json = restTemplate.exchange(url, HttpMethod.GET, entity,
+				String.class, urlVariables).getBody();
+		return JSON.parseObject(json,typeReference);
+	}
+
+	/**
 	 * POST 请求
 	 * 
 	 * @param url
@@ -109,6 +127,27 @@ public class RestTemplateClient implements InitializingBean {
 		String requestJson = JSON.toJSONString(request);
 		HttpEntity<String> entity = new HttpEntity<String>(requestJson, getHttpHeaders());
 		String json = restTemplate.exchange(url, HttpMethod.POST, entity, String.class, urlVariables).getBody();
+		return JSON.parseObject(json, typeReference);
+	}
+
+	/**
+	 * @author 刘德云
+	 * @date 2017年11月21日20:50:24
+	 * @param url
+	 * @param request
+	 * @param httpHeaders
+	 * @param typeReference
+	 * @param urlVariables
+	 * @param <T>
+	 * @return
+	 */
+	public <T> T postForObject(String url, Object request,HttpHeaders httpHeaders,
+							   TypeReference<T> typeReference, Object... urlVariables) {
+		String requestJson = JSON.toJSONString(request);
+		HttpEntity<String> entity = new HttpEntity<String>(requestJson,
+				httpHeaders);
+		String json = restTemplate.exchange(url, HttpMethod.POST, entity,
+				String.class, urlVariables).getBody();
 		return JSON.parseObject(json, typeReference);
 	}
 
@@ -133,6 +172,21 @@ public class RestTemplateClient implements InitializingBean {
 
 	public void setInterceptors(List<ClientHttpRequestInterceptor> interceptors) {
 		this.interceptors = interceptors;
+		//如果在已经构建了restTemplate对象之后再来添加，需要重新设置template中的拦截器
+		if (this.restTemplate != null) {
+			restTemplate.setInterceptors(interceptors);
+		}
+	}
+
+	public void addInterceptor(ClientHttpRequestInterceptor interceptor) {
+		if (interceptors == null) {
+			interceptors = new ArrayList<>(1);
+		}
+		interceptors.add(interceptor);
+		//如果在已经构建了restTemplate对象之后再来添加，需要重新设置template中的拦截器
+		if (this.restTemplate != null) {
+			restTemplate.setInterceptors(interceptors);
+		}
 	}
 
 	public RestTemplate getRestTemplate() {

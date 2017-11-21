@@ -1,11 +1,11 @@
 package com.hoau.zodiac.springboot.autoconfig.web.restful;
 
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.context.annotation.Scope;
 
 import java.util.List;
 
@@ -26,19 +26,15 @@ public class RestTemplateConfiguration {
 
     /**
      * 创建访问restful接口的客户端工具
-     * @param httpRequestInterceptors
      * @return
      * @author 陈宇霖
      * @date 2017年08月17日11:19:52
      */
     @Bean
-    public RestTemplateClient restTemplateClient(ObjectProvider<List<ClientHttpRequestInterceptor>> httpRequestInterceptors) {
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public RestTemplateClient restTemplateClient() {
         RestTemplateClient restTemplateClient = new RestTemplateClient();
         restTemplateClient.setRestfulTemplateProperties(restfulTemplateProperties);
-        List<ClientHttpRequestInterceptor> interceptors = httpRequestInterceptors.getIfAvailable();
-        if (interceptors != null) {
-            restTemplateClient.setInterceptors(interceptors);
-        }
         return restTemplateClient;
     }
 }
