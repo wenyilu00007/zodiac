@@ -58,7 +58,7 @@ public class SFTPUtils implements Serializable {
      * @Param dirCode 目录编号 0 上传到 /jv/bills下 1 上传到/jv/backup下
      * @throws Exception
      */
-    public static final void uploadAttachment(String attDirOrFile, String dirCode) {
+    public static final void uploadToSFTP(String attDirOrFile, String dirCode) {
         SFTPUtils sftpUtils = new SFTPUtils();
         ChannelSftp sftp = null;
         try{
