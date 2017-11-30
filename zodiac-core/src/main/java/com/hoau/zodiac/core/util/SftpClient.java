@@ -1,4 +1,4 @@
-package com.hoau.zodiac.core.util.network;
+package com.hoau.zodiac.core.util;
 
 import com.jcraft.jsch.*;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -12,14 +12,14 @@ import java.util.Properties;
 /**
  * @author DINGYONG
  * @version 1.0
- * @title SftpUtils
- * @package com.hoau.scorpio.util
+ * @title SftpClient
+ * @package com.hoau.zodiac.core.util.network
  * @description
  * @date 2017/11/18
  */
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class SftpUtils {
+public class SftpClient {
 
     private Channel channel = null;
     private Session sshSession = null;
