@@ -171,6 +171,7 @@ public class SftpClient {
             outputStream = new ByteArrayOutputStream();
             sftp.cd(directory);
             sftp.get(downloadFile, outputStream);
+            //注意返回接收的inputStream需要关闭
             return new ByteArrayInputStream(outputStream.toByteArray());
         } finally {
             try {
