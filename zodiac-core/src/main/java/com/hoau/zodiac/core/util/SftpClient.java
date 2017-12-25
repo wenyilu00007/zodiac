@@ -235,6 +235,8 @@ public class SftpClient {
      * @param downloadFile
      * @return byte
      * @author DINGYONG
+     * @throws SftpException
+     * @throws IOException
      */
     public byte[] downloadForBytes(String directory, String downloadFile)
             throws SftpException, IOException {
@@ -256,6 +258,20 @@ public class SftpClient {
     }
 
     /**
+     * 重命名文件
+     *
+     * @param oldPath
+     * @param newPath
+     * @throws SftpException
+     * @throws IOException
+     * @author DINGYONG
+     */
+    public void renameFileName(String oldPath,String newPath)
+            throws SftpException, IOException {
+        sftp.rename(oldPath,newPath);
+    }
+
+    /**
      * 删除文件
      *
      * @param directory  要删除文件所在目录
@@ -271,7 +287,7 @@ public class SftpClient {
     }
 
     /**
-     * 判断是否断开了sftp连接通道
+     * 判断是否断开了sftp连接通道 false则为断开
      * @return true
      * @author DINGYONG
      */
