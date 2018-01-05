@@ -820,4 +820,46 @@ public class StringUtils {
         return buf.toString();
     }
 
+    public static boolean isChinese(char c) {
+        Character.UnicodeBlock ub = Character.UnicodeBlock.of(c);
+        if (ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS
+                || ub == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS
+                || ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A
+                || ub == Character.UnicodeBlock.GENERAL_PUNCTUATION
+                || ub == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION
+                || ub == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 对字符串进行截取截取
+     * @param message
+     * @param lengthByte
+     * @return
+     * @author 陈宇霖
+     * @date 2018年01月04日19:16:57
+     */
+    public static String truncateString(String message, int lengthByte) {
+        //对堆栈进行截取
+        StringBuffer result = new StringBuffer();
+        int currentLength = 0;
+        int currentIndex = 0;
+        while (currentLength < lengthByte) {
+            char c = message.charAt(currentIndex);
+            currentIndex ++;
+            if (StringUtils.isChinese(c)) {
+                currentLength += 2;
+            } else {
+                currentLength += 1;
+            }
+            if (currentLength > lengthByte || currentIndex == message.length()) {
+                break;
+            } else {
+                result.append(c);
+            }
+        }
+        return result.toString();
+    }
 }
