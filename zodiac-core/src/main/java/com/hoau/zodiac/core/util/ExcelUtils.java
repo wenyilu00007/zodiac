@@ -1,6 +1,8 @@
 package com.hoau.zodiac.core.util;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.hoau.zodiac.core.constant.ExcelConstants;
 import com.hoau.zodiac.core.exception.BusinessException;
 import org.apache.commons.lang.StringUtils;
@@ -11,6 +13,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.codec.Base64;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -44,6 +47,7 @@ public class ExcelUtils {
      * @date 2017/11/17 20:17
      * Description: excel文件转换为一个map.  map的key为行数，value 中的 key 为列数，value中的value 为值
      */
+    @Deprecated
     public static Map<Integer, Map<Integer, String>> readToMapByFile(MultipartFile multipartFile, int startRowNum) {
         if (multipartFile.getSize() > ExcelConstants.MAX_IMPORT_UPLOAD) {
             throw new BusinessException("文件超过2M，请检查文件重新上传");
@@ -113,6 +117,97 @@ public class ExcelUtils {
             }
         }
     }
+
+
+
+    /**
+     * @param excelFile 输入流
+     * @param startRowNum   开始读取的行(0开始) 不能小于0
+     * @param maxSize   限定一个最大文件SIZE
+     * @author zhangchao
+     * @date 2017/11/17 20:17
+     * Description: excel文件转换为一个map.  map的key为行数，value 中的 key 为列数，value中的value 为值
+     */
+    public static Map<Integer, Map<Integer, String>> readToMapByFileObj(Object[] excelFile , int startRowNum,Long maxSize) {
+        if(excelFile==null||excelFile.length<=0||excelFile[0]==null){
+            throw new BusinessException("数据为空，请检查文件重新上传");
+        }
+        JSONObject jsonObj = JSON.parseObject(excelFile[0].toString());
+        String fileName = jsonObj.getString("name");
+        Long fileSize = jsonObj.getLong("size");
+        String str = jsonObj.getString("url");
+        String base64Data = StringUtils.substringAfterLast(str, "base64,");
+        if (fileSize> maxSize) {
+            throw new BusinessException("文件超过指定大小，请检查文件重新上传");
+        }
+        if (!fileName.endsWith(ExcelConstants.FILE_EXTENSION_XLSX)) {
+            throw new BusinessException("excel文件格式不正确，必须是xlsx结尾的文件");
+        }
+        InputStream inputStream = null;
+        try {
+            byte[] data = Base64.decode(base64Data.getBytes());
+            inputStream =new ByteArrayInputStream(data) ;
+            XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            Map<Integer, Map<Integer, String>> resultData = new HashMap<Integer, Map<Integer, String>>();
+            for (int i = startRowNum; i < sheet.getLastRowNum() + 1; i++) {
+                XSSFRow XSSFRow = sheet.getRow(i);
+                Map<Integer, String> cellData = new HashMap<Integer, String>();
+                String cellValue = "";
+                if (XSSFRow == null) {//处理空行
+                    if (i == startRowNum) {
+                        return resultData;
+                    }
+                    resultData.put(i + 1, null);
+                    continue;
+                }
+                for (int k = 0; k < XSSFRow.getLastCellNum(); k++) {
+                    if (XSSFRow.getCell(k) == null) { //处理空列
+                        cellData.put(k + 1, "");
+                        continue;
+                    }
+                    switch (XSSFRow.getCell(k).getCellType()) {
+                        case Cell.CELL_TYPE_NUMERIC:
+                            if (HSSFDateUtil.isCellDateFormatted(XSSFRow.getCell(k))) {
+                                //  如果是date类型则 ，获取该cell的date值
+                                cellValue = df.format(XSSFRow.getCell(k).getDateCellValue());
+                            } else { // 纯数字
+                                cellValue = String.valueOf(XSSFRow.getCell(k).getNumericCellValue());
+                            }
+                            break;
+                        case Cell.CELL_TYPE_STRING:
+                            cellValue = XSSFRow.getCell(k).getStringCellValue();
+                            break;
+                        case Cell.CELL_TYPE_BOOLEAN:
+                            cellValue = XSSFRow.getCell(k).getBooleanCellValue() + "";
+                            break;
+//                        case Cell.CELL_TYPE_BLANK:
+//                            cellValue = "";
+//                            break;
+                        default:
+                            cellValue = "";
+                            break;
+                    }
+                    cellData.put(k + 1, cellValue);
+                }
+                resultData.put(i + 1, cellData);
+            }
+            return resultData;
+        } catch (Exception e) {
+            logger.error("excel文件解析失败!!!", e);
+            throw new BusinessException("excel文件解析失败，请严格按照模板填写数据");
+        } finally {
+            try {
+                if (null != inputStream) {
+                    inputStream.close();
+                }
+            } catch (IOException e) {
+                logger.error("输入流关闭失败", e);
+            }
+        }
+    }
+
+
 
     /**
      * @param maps           <String,String> maps
