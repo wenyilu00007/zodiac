@@ -32,7 +32,7 @@ import java.util.*;
  * @date 2017/11/17 15:14
  */
 public class ExcelUtils {
-    static Logger logger = LoggerFactory.getLogger(ExcelUtils.class);
+    static Logger logger = LoggerFactory.getLogger(com.hoau.zodiac.core.util.ExcelUtils.class);
 
     public static SimpleDateFormat dfSimple = new SimpleDateFormat(
             "yyyy-MM-dd");
@@ -312,6 +312,123 @@ public class ExcelUtils {
                 logger.error("输入流关闭失败", e);
             }
         }
+    }
+
+    /**
+     * @param maps           <String,String> maps
+     * @param listData       <T> list 需要导出的数据列表对象
+     * @param file           excel文件 支持 xlsx 和 xls 文件
+     * @param dateFormatType 0位不带时分秒 1为带时分秒  没有时间的导出忽略
+     * @return
+     */
+    public static <T> void writeData(Map<String, String> maps, List<T> listData, File file, Integer dateFormatType, Integer startRow) {
+        if (file == null) {
+            throw new BusinessException("文件不能为空!!!");
+        }
+        FileInputStream in = null;
+        FileOutputStream out = null;
+        try {
+            if (!file.exists()) {
+                writeHeader(maps, file);
+            }
+            in = new FileInputStream(file);
+            Workbook wb = new XSSFWorkbook(in);
+            Sheet sheet = wb.getSheetAt(0);
+            Set<String> sets = maps.keySet();
+            if (startRow == null) {
+                startRow = 1;
+            }
+            int size = listData.size();
+            for (int j = 0; j < size; j++) {
+                Row row = sheet.createRow(j + startRow);
+                T p = listData.get(j);
+                setRowData(sets, dateFormatType, row, p);
+            }
+            out = new FileOutputStream(file);
+            wb.write(out);
+            out.flush();
+        } catch (Exception e) {
+            logger.error("IOException", e);
+        } finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+                if (out != null) {
+                    out.close();
+                }
+            } catch (Exception e) {
+                logger.error("输入流关闭失败", e);
+            }
+        }
+    }
+
+    private static <T> void setRowData(Set<String> sets, Integer dateFormatType, Row row, T p) {
+        int index = 0;
+        Class classType = p.getClass();
+        for (Iterator<String> it = sets.iterator(); it.hasNext(); ) {
+            try {
+                String key = it.next();
+                String firstLetter = key.substring(0, 1).toUpperCase();
+                // 获得和属性对应的getXXX()方法的名字
+                String getMethodName = "get" + firstLetter
+                        + key.substring(1);
+                // 获得和属性对应的getXXX()方法
+                Method getMethod = classType.getMethod(getMethodName,
+                        new Class[]{});
+                // 调用原对象的getXXX()方法
+                Object value = getMethod.invoke(p, new Object[]{});
+                if (value instanceof Date) {
+                    if (dateFormatType == ExcelConstants.DATE_FORMAT_TYPE_ALL) {
+                        value = df.format(value);
+                    } else {
+                        value = dfSimple.format(value);
+                    }
+                }
+                Cell cell = row.createCell(index++);
+                cell.setCellValue(value == null ? "" : value.toString());
+            } catch (Exception e) {
+                logger.error("write excel error", e);
+            }
+        }
+    }
+
+    /**
+     * 写excel头部
+     * @param maps   <String,String> maps
+     * @param file   excel文件
+     * @return
+     */
+    private static Workbook writeHeader(Map<String, String> maps, File file) {
+        FileOutputStream os = null;
+        try {
+            os = new FileOutputStream(file);
+            Workbook wb = new XSSFWorkbook();
+            CreationHelper createHelper = wb.getCreationHelper();
+            Sheet sheet = wb.createSheet("sheet1");
+            Set<String> sets = maps.keySet();
+            Row row = sheet.createRow(0);
+            int i = 0;
+            // 定义表头
+            for (Iterator<String> it = sets.iterator(); it.hasNext(); ) {
+                String key = it.next();
+                Cell cell = row.createCell(i++);
+                cell.setCellValue(createHelper.createRichTextString(maps.get(key)));
+            }
+            wb.write(os);
+            os.flush();
+        } catch (Exception e) {
+            logger.error("IOException", e);
+        } finally {
+            try {
+                if (os != null) {
+                   os.close();
+                }
+            } catch (IOException e) {
+                logger.error("输入流关闭失败", e);
+            }
+        }
+        return null;
     }
 
     private static void setResponse(HttpServletResponse response, String fileName) {
