@@ -148,7 +148,7 @@ public class BasicController {
     @ExceptionHandler(Exception.class)
     @ResponseBody
     public Response handlerException(Exception exception) {
-        log.error(exception.getMessage(), exception);
+        log.error(RequestContext.getRequestId(), exception);
         Response response = new Response();
         response.setSuccess(false);
 
@@ -172,9 +172,9 @@ public class BasicController {
         } else { //未捕获异常
             response.setRequestId(RequestContext.getRequestId());
             response.setHasBusinessException(false);
-            response.setMessage(exception.getMessage());
+            response.setMessage("系统异常");
             response.setErrorCode(Response.ERROR_CODE_UNHANDLED_EXCEPTION);
-            response.setErrorMsg(ExceptionUtils.getStack(exception));
+//            response.setErrorMsg(ExceptionUtils.getStack(exception));
         }
         return response;
     }
