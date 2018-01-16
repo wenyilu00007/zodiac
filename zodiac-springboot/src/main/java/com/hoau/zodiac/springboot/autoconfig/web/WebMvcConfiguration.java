@@ -27,6 +27,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.validation.beanvalidation.LocaleContextMessageInterpolator;
 import org.springframework.validation.beanvalidation.MessageSourceResourceBundleLocator;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -174,8 +175,10 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter implements Appl
         Validator validator = Validation.byDefaultProvider()
                 .configure()
                 .messageInterpolator(
-                        new ResourceBundleMessageInterpolator(
-                                new MessageSourceResourceBundleLocator(messageSource)
+                        new LocaleContextMessageInterpolator(
+                            new ResourceBundleMessageInterpolator(
+                                    new MessageSourceResourceBundleLocator(messageSource)
+                            )
                         )
                 )
                 .buildValidatorFactory()
