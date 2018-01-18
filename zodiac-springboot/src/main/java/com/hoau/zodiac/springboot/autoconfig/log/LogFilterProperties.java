@@ -1,5 +1,7 @@
 package com.hoau.zodiac.springboot.autoconfig.log;
 
+import java.util.List;
+
 /**
 * @Title: LogFilterProperties 
 * @Package com.hoau.leo.config.log 
@@ -39,6 +41,11 @@ public class LogFilterProperties {
      * 记录的最大payload大小
      */
     private int maxPayloadLength = 2*1024*1024;
+
+    /**
+     * 不记录日志的地址
+     */
+    private List<String> excludeUrlPatterns;
 
     public boolean isEnable() {
         return enable;
@@ -88,4 +95,11 @@ public class LogFilterProperties {
         this.maxPayloadLength = maxPayloadLength;
     }
 
+    public List<String> getExcludeUrlPatterns() {
+        return excludeUrlPatterns;
+    }
+
+    public void setExcludeUrlPatterns(List<String> excludeUrlPatterns) {
+        this.excludeUrlPatterns = excludeUrlPatterns;
+    }
 }

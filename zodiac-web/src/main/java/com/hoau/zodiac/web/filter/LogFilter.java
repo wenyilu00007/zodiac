@@ -18,7 +18,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 /**
 * @Title: LogFilter 
@@ -58,6 +61,24 @@ public class LogFilter extends OncePerRequestFilter {
     private int maxPayloadLength = 2*1024*1024;
 
     AntPathMatcher antPathMatcher = new AntPathMatcher();
+
+    /**
+     * 不进行过滤的请求pattern
+     */
+    private List<String> excludeUrlPatterns = new ArrayList<String>(Arrays.asList("/health"));
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String url = request.getServletPath();
+        boolean matched = false;
+        for (String pattern : excludeUrlPatterns) {
+            matched = antPathMatcher.match(pattern, url);
+            if (matched) {
+                break;
+            }
+        }
+        return matched;
+    }
 
     /**
      * Same contract as for {@code doFilter}, but guaranteed to be
@@ -295,5 +316,13 @@ public class LogFilter extends OncePerRequestFilter {
 
     public void setMaxPayloadLength(int maxPayloadLength) {
         this.maxPayloadLength = maxPayloadLength;
+    }
+
+    public List<String> getExcludeUrlPatterns() {
+        return excludeUrlPatterns;
+    }
+
+    public void setExcludeUrlPatterns(List<String> excludeUrlPatterns) {
+        this.excludeUrlPatterns = excludeUrlPatterns;
     }
 }

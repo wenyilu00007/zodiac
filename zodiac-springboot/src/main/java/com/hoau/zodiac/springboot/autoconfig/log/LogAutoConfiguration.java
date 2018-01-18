@@ -11,6 +11,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Arrays;
 
@@ -44,6 +45,9 @@ public class LogAutoConfiguration {
         logFilter.setNeedLogResponse(logProperties.getFilter().isNeedLogResponse());
         logFilter.setNeedLogHeader(logProperties.getFilter().isNeedLogHeader());
         logFilter.setNeedLogPayload(logProperties.getFilter().isNeedLogPayload());
+        if (!CollectionUtils.isEmpty(logProperties.getFilter().getExcludeUrlPatterns())) {
+            logFilter.setExcludeUrlPatterns(logProperties.getFilter().getExcludeUrlPatterns());
+        }
         FilterRegistrationBean registrationBean = new FilterRegistrationBean();
         registrationBean.setFilter(logFilter);
         registrationBean.setUrlPatterns(Arrays.asList(UrlConstants.MATCH_ALL_URL_PATTERN));
