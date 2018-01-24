@@ -435,7 +435,6 @@ public class ExcelUtils {
         // 设置response的Header
         response.addHeader("Content-Disposition", "attachment;filename="
                 + new String(fileName.getBytes()));
-        response.addHeader("Content-Length", "" + fileName.length());
         response.setContentType("application/vnd.ms-excel;charset=gb2312");
     }
 }
