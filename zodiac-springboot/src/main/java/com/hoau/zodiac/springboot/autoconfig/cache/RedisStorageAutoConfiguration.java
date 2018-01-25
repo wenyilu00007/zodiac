@@ -32,7 +32,7 @@ public class RedisStorageAutoConfiguration {
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Bean
     @Primary
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = "redisCacheStorage")
     public RedisCacheStorage redisCacheStorage(@Qualifier("redisTemplate") RedisTemplate redisTemplate) {
         RedisCacheStorage storage = new RedisCacheStorage();
         GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer();
