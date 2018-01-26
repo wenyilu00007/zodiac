@@ -231,7 +231,7 @@ public class ExcelUtils {
         ByteArrayOutputStream byteArrayOutputStream = null;
         OutputStream toClient = null;
         try {
-            fileName = new String(fileName.getBytes("UTF-8"), "ISO-8859-1");
+            fileName = new String(fileName.getBytes("gb2312"),"ISO8859-1");
             wb = new XSSFWorkbook();
             CreationHelper createHelper = wb.getCreationHelper();
             Sheet sheet = wb.createSheet("sheet1");
@@ -435,6 +435,6 @@ public class ExcelUtils {
         // 设置response的Header
         response.addHeader("Content-Disposition", "attachment;filename="
                 + new String(fileName.getBytes()));
-        response.setContentType("application/vnd.ms-excel;charset=gb2312");
+        response.setContentType("application/vnd.ms-excel;charset=ISO8859-1");
     }
 }
