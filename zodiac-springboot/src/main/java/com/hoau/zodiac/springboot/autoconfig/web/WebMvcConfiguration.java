@@ -3,6 +3,7 @@ package com.hoau.zodiac.springboot.autoconfig.web;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter4;
 import com.hoau.zodiac.core.constant.UrlConstants;
 import com.hoau.zodiac.springboot.autoconfig.context.ContextFilterAutoConfiguration;
+import com.hoau.zodiac.springboot.autoconfig.context.SpringApplicationContextHolder;
 import com.hoau.zodiac.web.filter.ContextFilter;
 import com.hoau.zodiac.web.filter.CorsFilter;
 import com.hoau.zodiac.web.filter.IpWhiteListFilter;
@@ -184,6 +185,12 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter implements Appl
                 .buildValidatorFactory()
                 .getValidator();
         return validator;
+    }
+
+
+    @Bean
+    public SpringApplicationContextHolder springApplicationContextHolder() {
+        return new SpringApplicationContextHolder();
     }
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
