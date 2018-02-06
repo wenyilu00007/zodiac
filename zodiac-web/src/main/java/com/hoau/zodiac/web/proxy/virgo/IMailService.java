@@ -39,7 +39,9 @@ public interface IMailService {
      * @author 陈宇霖
      * @date 2017年09月26日23:57:16
      */
-    @RequestMapping(value = Constants.VIRGO_SEND_SYNC_MAIL_SERVICE_URL, method = RequestMethod.POST)
+    @RequestMapping(value = Constants.VIRGO_SEND_SYNC_MAIL_SERVICE_URL,
+            method = RequestMethod.POST,
+            consumes = {MediaType.APPLICATION_JSON_VALUE})
     Response sendMailSync(@RequestBody MailEntity mailEntity);
 
 }
