@@ -100,7 +100,7 @@ public class SftpClient {
             isDirExistFlag = true;
             return sftpATTRS.isDir();
         } catch (Exception e) {
-            logger.error("sftp服务器没有这个目录,{}", e);
+//            logger.error("sftp服务器没有这个目录,{}", e);
             if (e.getMessage().toLowerCase().equals("no such file")) {
                 isDirExistFlag = false;
             }
