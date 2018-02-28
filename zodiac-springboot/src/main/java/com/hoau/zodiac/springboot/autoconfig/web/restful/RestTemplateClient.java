@@ -2,6 +2,7 @@ package com.hoau.zodiac.springboot.autoconfig.web.restful;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter4;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
@@ -33,6 +35,11 @@ public class RestTemplateClient implements InitializingBean {
     private RestTemplate restTemplate;
 
     /**
+     * 使用fastjson做消息转换器的resetTemplate
+     */
+    private RestTemplate fastjsonConverterRestTemplate;
+
+    /**
      * 连接工厂相关设置
      */
     private RestfulTemplateProperties restfulTemplateProperties;
@@ -41,6 +48,16 @@ public class RestTemplateClient implements InitializingBean {
      * 拦截器
      */
     private List<ClientHttpRequestInterceptor> interceptors;
+
+    /**
+     * 使用fastjson做消息转换器的RestTemplate的拦截器
+     */
+    private List<ClientHttpRequestInterceptor> fastjsonInterceptors;
+
+    /**
+     * fastjson转换器
+     */
+    private FastJsonHttpMessageConverter4 fastJsonHttpMessageConverter4;
 
     public void afterPropertiesSet() throws Exception {
         restTemplate = new RestTemplate();
@@ -67,6 +84,17 @@ public class RestTemplateClient implements InitializingBean {
         if (!CollectionUtils.isEmpty(interceptors)) {
             restTemplate.setInterceptors(interceptors);
         }
+
+        List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+        messageConverters.add(fastJsonHttpMessageConverter4 == null ? new FastJsonHttpMessageConverter4()
+                : fastJsonHttpMessageConverter4);
+        fastjsonConverterRestTemplate = new RestTemplate(messageConverters);
+        fastjsonConverterRestTemplate.setRequestFactory(clientHttpRequestFactory);
+        // 配置请求拦截器
+        if (!CollectionUtils.isEmpty(fastjsonInterceptors)) {
+            fastjsonConverterRestTemplate.setInterceptors(fastjsonInterceptors);
+        }
+
     }
 
     /**
@@ -184,6 +212,24 @@ public class RestTemplateClient implements InitializingBean {
     }
 
     /**
+     * 使用fastjson做转换器的RestTemplate发送请求
+     * @param httpMethod
+     * @param url
+     * @param request
+     * @param httpHeaders
+     * @param typeReference
+     * @param urlVariables
+     * @param <T>
+     * @return
+     */
+    public <T> T fastjsonExchangeForObject(HttpMethod httpMethod, String url, Object request, HttpHeaders httpHeaders,
+                                   TypeReference<T> typeReference, Object... urlVariables) {
+        HttpEntity entity = new HttpEntity(request, httpHeaders);
+        String json = fastjsonConverterRestTemplate.exchange(url, httpMethod, entity, String.class, urlVariables).getBody();
+        return JSON.parseObject(json, typeReference);
+    }
+
+    /**
      * 设置通用的头信息
      * @return
      * @author 陈宇霖
@@ -208,6 +254,10 @@ public class RestTemplateClient implements InitializingBean {
         return interceptors;
     }
 
+    public List<ClientHttpRequestInterceptor> getFastjsonInterceptors() {
+        return fastjsonInterceptors;
+    }
+
     public void setInterceptors(List<ClientHttpRequestInterceptor> interceptors) {
         this.interceptors = interceptors;
         //如果在已经构建了restTemplate对象之后再来添加，需要重新设置template中的拦截器
@@ -227,7 +277,34 @@ public class RestTemplateClient implements InitializingBean {
         }
     }
 
+    public void setFastjsonInterceptors(List<ClientHttpRequestInterceptor> interceptors) {
+        this.fastjsonInterceptors = interceptors;
+        //如果在已经构建了restTemplate对象之后再来添加，需要重新设置template中的拦截器
+        if (this.fastjsonConverterRestTemplate != null) {
+            fastjsonConverterRestTemplate.setInterceptors(interceptors);
+        }
+    }
+
+    public void addFastjsonInterceptor(ClientHttpRequestInterceptor interceptor) {
+        if (fastjsonInterceptors == null) {
+            fastjsonInterceptors = new ArrayList<>(1);
+        }
+        fastjsonInterceptors.add(interceptor);
+        //如果在已经构建了restTemplate对象之后再来添加，需要重新设置template中的拦截器
+        if (this.fastjsonConverterRestTemplate != null) {
+            fastjsonConverterRestTemplate.setInterceptors(fastjsonInterceptors);
+        }
+    }
+
     public RestTemplate getRestTemplate() {
         return restTemplate;
+    }
+
+    public FastJsonHttpMessageConverter4 getFastJsonHttpMessageConverter4() {
+        return fastJsonHttpMessageConverter4;
+    }
+
+    public void setFastJsonHttpMessageConverter4(FastJsonHttpMessageConverter4 fastJsonHttpMessageConverter4) {
+        this.fastJsonHttpMessageConverter4 = fastJsonHttpMessageConverter4;
     }
 }

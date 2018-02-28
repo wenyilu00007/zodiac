@@ -1,7 +1,11 @@
 package com.hoau.zodiac.springboot.autoconfig.web.restful;
 
+import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter4;
+import com.hoau.zodiac.springboot.autoconfig.converter.FastJsonMessageConverterAutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,10 +23,14 @@ import java.util.List;
 */
 @Configuration
 @EnableConfigurationProperties(RestfulTemplateProperties.class)
+@AutoConfigureAfter({FastJsonMessageConverterAutoConfiguration.class})
 public class RestTemplateConfiguration {
 
     @Autowired
     private RestfulTemplateProperties restfulTemplateProperties;
+
+    @Autowired(required = false)
+    private FastJsonHttpMessageConverter4 fastJsonHttpMethodMessageConverter;
 
     /**
      * 创建访问restful接口的客户端工具
@@ -35,6 +43,7 @@ public class RestTemplateConfiguration {
     public RestTemplateClient restTemplateClient() {
         RestTemplateClient restTemplateClient = new RestTemplateClient();
         restTemplateClient.setRestfulTemplateProperties(restfulTemplateProperties);
+        restTemplateClient.setFastJsonHttpMessageConverter4(fastJsonHttpMethodMessageConverter);
         return restTemplateClient;
     }
 }
