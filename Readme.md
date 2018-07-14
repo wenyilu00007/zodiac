@@ -6,24 +6,24 @@
 
 | 工程名称       |音标 | 星座名           | 对应系统      |
 | ------------- | --- |:-------------:|:-----|
-| aries        |  ['εəri:z]            |白羊座|       TMS(运输管理系统)|
-| taurus       |  ['tɔ:rəs]            |金牛座|       FIN(财务)|
-| gemini       |  ['dʒeminai]          |双子座|       JOP(IS->JV)|
-| cancer       |  ['kænsə]             |巨蟹座|       CRM(客户关系管理)|
+| aries        |  ['εəri:z]            |白羊座|       暂无|
+| taurus       |  ['tɔ:rəs]            |金牛座|       暂无|
+| gemini       |  ['dʒeminai]          |双子座|      暂无|
+| cancer       |  ['kænsə]             |巨蟹座|       暂无|
 | leo          |  ['li:əu]             |狮子座|       权限管理|
 | virgo        |  ['və:ɡəu]            |处女座|       基础通用服务|
-| libra        |  ['laibrə]            |天秤座|       OMS(订单管理)|
-| scorpio      |  ['skɔ:piəu]          |天蝎座|       VMS(供应商管理)|
+| libra        |  ['laibrə]            |天秤座|       暂无|
+| scorpio      |  ['skɔ:piəu]          |天蝎座|       暂无|
 | sagittarius  |  [,sædʒi'tεəriəs]     |射手座|       暂无|
 | capricornus  |  [,kæpri'kɔ:nəs]      |摩羯座|       暂无|
-| aquarius     |  [ə'kwεəriəs]         |水瓶座|       Product(产品管理)|
-| pisces       |  ['paisi:z]           |双鱼座|       SDK(第三方jar包)|
+| aquarius     |  [ə'kwεəriəs]         |水瓶座|       暂无|
+| pisces       |  ['paisi:z]           |双鱼座|       暂无|
 
 #### 引入开发平台
 项目中增加如下依赖,即可引入开发平台，
 ```xml
 <dependency>
-    <groupId>com.hoau.zodiac</groupId>
+    <groupId>com.wyl.zodiac</groupId>
     <artifactId>zodiac-springboot</artifactId>
     <version>1.0-SNAPSHOT</version>
 </dependency>
@@ -43,7 +43,7 @@
                 config:
                     enabled: false
                 consul:
-                  host: ${consul:10.39.232.220}  #consul 服务/配置中心地址,测试环境高可用地址还在申请中 sctest.hoau.net
+                  host: ${consul:10.39.232.220}  #consul 服务/配置中心地址,测试环境高可用地址还在申请中 sctest.wyl.net
                   port: 8500
                   enabled: true
                   config:
@@ -107,7 +107,7 @@
         config:
             enabled: false
         consul:
-          host: ${consul:10.39.232.220} #consul 服务/配置中心地址,测试环境高可用地址还在申请中 sctest.hoau.net
+          host: ${consul:10.39.232.220} #consul 服务/配置中心地址,测试环境高可用地址还在申请中 sctest.wyl.net
           port: 8500
           enabled: true
           config:
@@ -159,7 +159,7 @@
        //允许连接consul
        @EnableDiscoveryClient
        //允许使用Feign调用在服务中心注册的服务
-       @EnableFeignClients(basePackages = "com.hoau.*")
+       @EnableFeignClients(basePackages = "com.wyl.*")
        public class LeoApplication {
            public static void main(String[] args) {
                SpringApplication.run(LeoApplication.class, args);
@@ -168,7 +168,7 @@
         ```
         在 projectname-proxy 模块中调用外部服务,包括调用 restful 接口也在此包中声明
         
-        --- com.hoau.leo.proxy.virgo 此包表示 leo 调用virgo服务（或系统） 
+        --- com.wyl.leo.proxy.virgo 此包表示 leo 调用virgo服务（或系统） 
         ```
         @FeignClient(value = Constants.VIRGO)
         public interface IdGenerator {
@@ -257,12 +257,12 @@
           cas:
             client:
               enable: true
-              casServerUrlPrefix: https://casx.hoau.net/cas
-              casServerLoginUrl: https://casx.hoau.net/cas/login
+              casServerUrlPrefix: https://casx.wyl.net/cas
+              casServerLoginUrl: https://casx.wyl.net/cas/login
               appServerName: http://localhost:8424/leo
               redirectServerUrl: http://localhost:8424/leo
-              casServerLogoutUrl: https://casx.hoau.net/cas/logout
-              authenticationRedirectStrategyClass: com.hoau.leo.config.cas.DemoAuthenticationRedirectStrategy
+              casServerLogoutUrl: https://casx.wyl.net/cas/logout
+              authenticationRedirectStrategyClass: com.wyl.leo.config.cas.DemoAuthenticationRedirectStrategy
               authenticationExclusions: /health
               validationExclusions: /health
         ```
@@ -411,7 +411,7 @@
                 <logger name="org.apache.ibatis" level="INFO" />
                 <logger name="org.mybatis" level="INFO" />
                 <logger name="tk.mybatis" level="INFO" />
-                <logger name="com.hoau" level="INFO" />
+                <logger name="com.wyl" level="INFO" />
                 <root>
                     <level value="INFO" />
                     <appender-ref ref="CONSOLE" />
@@ -440,7 +440,7 @@
                 <logger name="org.apache.ibatis" level="INFO" />
                 <logger name="org.mybatis" level="INFO" />
                 <logger name="tk.mybatis" level="INFO" />
-                <logger name="com.hoau" level="INFO" />
+                <logger name="com.wyl" level="INFO" />
                 <root>
                     <level value="INFO" />
                     <appender-ref ref="KafkaAppender" />
@@ -552,7 +552,7 @@
    - 增加mapper自动扫描
         ```java
         @SpringBootApplication
-        @MapperScan("com.hoau.**.dao")
+        @MapperScan("com.wyl.**.dao")
         public class ZodiacApplication {
             public static void main(String[] args) {
                 SpringApplication.run(ZodiacApplication.class, args);
@@ -586,7 +586,7 @@
         <!DOCTYPE mapper PUBLIC
                 "-//mybatis.org//DTD Mapper 3.0//EN"
                 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-        <mapper namespace="com.hoau.zodiac.demo.dao.UserDao">
+        <mapper namespace="UserDao">
         </mapper>
         ```
    - 增加Service,继承AbstractBaseService
